@@ -1,3 +1,4 @@
+package core;
 /**
  * A class representing a rhythm according to Toussaint's
  * Geometry of musical rhythm.
