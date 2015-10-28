@@ -2,7 +2,8 @@ package core;
 
 
 /**
- * A library of Rhythms and transformations
+ * A library of Rhythms and transformations.
+ * Eventually this should be in an sql database.
  * @author kr0
  *
  */
