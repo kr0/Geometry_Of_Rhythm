@@ -1,64 +1,77 @@
 package core;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
+
+import org.kohsuke.randname.RandomNameGenerator;
 
 public class Timeline implements ITimeline {
 
-	private int mPulsenumber;
-	private int[] mInterOnsetIntervals;
-	private ArrayList<String> mBoxNotation;
+	private List<Onset> mOnsets;
+	private String mName;
+	private final static RandomNameGenerator nameGen = new RandomNameGenerator();
 	
-	
-	
-	public Timeline(int... interonsetIntervals){
-		mPulsenumber = 0;
-		mInterOnsetIntervals = interonsetIntervals;
-		for(int onset: mInterOnsetIntervals){
-			mPulsenumber+=onset;
-			
-			// make box notation
-			mBoxNotation.add("x");
-			for(int i = 1; i < onset; i++){
-				mBoxNotation.add(".");
-			}
-			
+
+	public Timeline() {
+		mOnsets = new ArrayList<Onset>();
+		mName = nameGen.next();
+	}
+
+	public Timeline(int... interonsetIntervals) {
+		this();
+		for (int duration : interonsetIntervals) {
+			mOnsets.add(new Onset(duration));
 		}
 	}
-	
+
 	@Override
 	public void insertAtPulse(int pulse, int duration) {
-		// TODO Auto-generated method stub
+		insertAtPulse(pulse,duration, false);
 
+	}
+	@Override
+	public void insertAtPulse(int pulse, int duration, boolean isAccented) {
+		mOnsets.add(pulse, new Onset(duration, isAccented));
 	}
 
 	@Override
 	public void deleteOnset(int onsetNumber) {
-		// TODO Auto-generated method stub
-
+		mOnsets.remove(onsetNumber);
+	}
+	
+	@Override
+	public void replaceOnset(int onsetNumberToReplace, int duration, boolean isAccented){
+		mOnsets.set(onsetNumberToReplace, new Onset(duration, isAccented));
+	}
+	
+	@Override
+	public void replaceOnset(int onsetNumberToReplace, int duration){
+		this.replaceOnset(onsetNumberToReplace, duration, false);
 	}
 
 	@Override
 	public String getInterOnsetIntervalString() {
-		return mInterOnsetIntervals.toString();
+		return mOnsets.stream().map(o -> Integer.toString(o.getDuration())).collect(Collectors.joining("-", "[", "]"));
 	}
 
 	@Override
 	public String getBoxNotationString() {
-		String sb = "[";
-		sb += mBoxNotation.stream().collect(Collectors.joining(","));
-		sb += "]";
-		return sb;
+		
+		String joined = mOnsets.stream()
+							   .map(Onset::toString)
+							   .collect(Collectors.joining());
+		return "[" + joined + "]";
 	}
 
 	@Override
 	public int getOnsetNumber() {
-		return mInterOnsetIntervals.length;
+		return mOnsets.size();
 	}
 
 	@Override
 	public int getPulseNumber() {
-		return mPulsenumber;
+		return mOnsets.stream().map(Onset::getDuration).reduce(0, (Integer a, Integer b) -> (a + b));
 	}
 
 }

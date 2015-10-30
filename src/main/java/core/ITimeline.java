@@ -48,6 +48,19 @@ public interface ITimeline {
 	 * @return
 	 */
 	public int getPulseNumber();
+
+	/**
+	 * Inserts an onset at a specific pulse in this timeline.
+	 * @param pulse the pulse at which to insert this onset
+	 * @param duration the duration of the onset
+	 * @param isAccented whether is accent this onset
+	 */
+	void insertAtPulse(int pulse, int duration, boolean isAccented);
+
+	
+	void replaceOnset(int onsetNumberToReplace, int duration, boolean isAccented);
+
+	void replaceOnset(int onsetNuberToReplace, int duration);
 	
 	
 	
