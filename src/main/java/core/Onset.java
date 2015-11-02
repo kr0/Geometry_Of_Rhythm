@@ -15,11 +15,12 @@ public final class Onset {
 		this(duration, false);
 	}
 
-	public Onset(int duration, boolean isAccented) {
+	public Onset(int duration, boolean isAccented) throws IllegalArgumentException {
+		if(duration <= 0) {throw new IllegalArgumentException("Duration must a postive non-zero number");}
+		
 		mDuration = duration;
 		mAccent = isAccented;
-		boxNotation = "";
-		boxNotation += mAccent ? "X" : "x";
+		boxNotation = mAccent ? "X" : "x";
 		for (int i = 1; i < mDuration; i++) {
 			boxNotation += ".";
 		}
@@ -40,7 +41,10 @@ public final class Onset {
 
 	@Override
 	public boolean equals(Object obj) {
-		return boxNotation.equals(obj);
+		if(obj == null || !(obj instanceof Onset)){
+			return false;
+		}
+		return this.boxNotation.equals(((Onset)obj).boxNotation);
 	}
 
 	@Override

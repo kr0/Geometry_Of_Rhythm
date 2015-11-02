@@ -36,10 +36,26 @@ public class Timeline implements ITimeline {
 	}
 
 	@Override
-	public void deleteOnset(int onsetNumber) {
-		mOnsets.remove(onsetNumber);
+	public void deleteOnset(int... onsetNumber) {
+		// check numbers are in range
+		for(int number: onsetNumber){
+			checkOnsetNumberInRange(number);
+		}
+		
+		// mark the onsets for deletion
+		for(int number: onsetNumber){
+			mOnsets.set(number, null);
+		}
+		mOnsets.removeIf(o -> o == null);
 	}
 	
+	private void checkOnsetNumberInRange(int number) {
+		if(number < 0 || number >= this.getOnsetNumber()){
+			throw new IndexOutOfBoundsException(String.format("Invalid Onset number, index: %s", number));
+		}
+		
+	}
+
 	@Override
 	public void replaceOnset(int onsetNumberToReplace, int duration, boolean isAccented){
 		mOnsets.set(onsetNumberToReplace, new Onset(duration, isAccented));
@@ -72,6 +88,14 @@ public class Timeline implements ITimeline {
 	@Override
 	public int getPulseNumber() {
 		return mOnsets.stream().map(Onset::getDuration).reduce(0, (Integer a, Integer b) -> (a + b));
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(obj == null || !(obj instanceof Timeline)){
+			return false;
+		}
+		return this.getBoxNotationString().equals(((Timeline)obj).getBoxNotationString());
 	}
 
 }

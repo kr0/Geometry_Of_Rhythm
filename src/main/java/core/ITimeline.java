@@ -16,10 +16,10 @@ public interface ITimeline {
 	public void insertAtPulse(int pulse, int duration);
 	
 	/**
-	 * Deletes a specific onset
-	 * @param onsetNumber
+	 * Deletes the specific onsets.
+	 * @param onsetNumber a zero indexed onset number i.e. the first onset of any timeline is called 0.
 	 */
-	public void deleteOnset(int onsetNumber);
+	public void deleteOnset(int... onsetNumber);
 	
 	/**
 	 * Interonset interval strings have the form
@@ -61,6 +61,7 @@ public interface ITimeline {
 	void replaceOnset(int onsetNumberToReplace, int duration, boolean isAccented);
 
 	void replaceOnset(int onsetNuberToReplace, int duration);
+
 	
 	
 	
