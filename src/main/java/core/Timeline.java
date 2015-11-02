@@ -31,8 +31,41 @@ public class Timeline implements ITimeline {
 
 	}
 	@Override
-	public void insertAtPulse(int pulse, int duration, boolean isAccented) {
-		mOnsets.add(pulse, new Onset(duration, isAccented));
+	public void insertAtPulse(int insertpulse, int duration, boolean isAccented) {
+		// Handle case where insertpulse is outside the total duration of this timeline
+		if(insertpulse > this.getPulseNumber()){
+			
+		}
+		
+		
+		int startPulseOfThisOnset = 0;
+		int onsetNumber = 0;
+		for(int i = 0; i<mOnsets.size(); i++){
+			
+			int endPulseOfThisOnset = startPulseOfThisOnset + mOnsets.get(i).getDuration();
+			
+			// insertpulse is conincident with this onset, i.e. replace this onset with the new one
+			// this is equivalent to replaceOnset
+			if(insertpulse == startPulseOfThisOnset){
+				mOnsets.set(i, new Onset(duration, isAccented));
+				return;
+			}
+			
+			// insertpulse is in range. make this onset shorter.
+			else if(insertpulse < endPulseOfThisOnset){
+				int newDuration = insertpulse - startPulseOfThisOnset;
+				Onset modifiedOnset = new Onset(newDuration, isAccented);
+				mOnsets.set(i, modifiedOnset);
+				break;
+			}
+			
+			startPulseOfThisOnset += mOnsets.get(i).getDuration();
+			onsetNumber++;
+		}
+		
+		// add new onset after the onset that was modified
+		onsetNumber++;
+		mOnsets.add(onsetNumber, new Onset(duration, isAccented));
 	}
 
 	@Override
