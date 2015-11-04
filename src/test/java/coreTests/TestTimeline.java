@@ -130,6 +130,7 @@ public class TestTimeline {
 	}
 	@Test
 	public void testInsertAtPulse(){
+		
 		Timeline t =  new Timeline(3,3,2);
 		t.insertAtPulse(5, 1);
 		assertTrue(t.getInterOnsetIntervalString().equals("[3-2-1-2]"));
@@ -142,12 +143,15 @@ public class TestTimeline {
 		t.insertAtPulse(0, 6);
 		assertTrue(t.getInterOnsetIntervalString().equals("[6-3-2]"));
 		
+		t = new Timeline(3,3,2);
+		t.insertAtPulse(8, 6);
+		assertTrue(t.getInterOnsetIntervalString().equals("[3-3-2-6]"));
+		
 	}
 
 	@Test
 	public void testDeleteOnsetThrowsOutOfBounds1() {
 		thrown.expect(IndexOutOfBoundsException.class);
-		thrown.expectMessage("index: -1");
 		Timeline t = new Timeline(3, 3, 2);
 		t.deleteOnset(-1);
 	}
@@ -155,7 +159,6 @@ public class TestTimeline {
 	@Test
 	public void testDeleteOnsetThrowsOutOfBounds2() {
 		thrown.expect(IndexOutOfBoundsException.class);
-		thrown.expectMessage("index: 3");
 		Timeline t = new Timeline(3, 3, 2);
 		t.deleteOnset(0, 1, 2, 3);
 	}
