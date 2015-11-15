@@ -3,7 +3,6 @@ package core;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import com.eaio.uuid.UUID;
 
 /**
  * Represents an onset with a duration. Can be accented or not.
@@ -12,12 +11,12 @@ import com.eaio.uuid.UUID;
  * @author kr0
  *
  */
-public final class Onset {
+public class Onset {
 	private List<Pulse> pulses;
-	private UUID id;
-
+	
 	public Onset(int duration) {
 		this(duration, false);
+		
 	}
 
 	public Onset(int duration, boolean isAccented) throws IllegalArgumentException {
@@ -28,7 +27,6 @@ public final class Onset {
 		for(int i = duration - 1; i > 0; i--){
 			pulses.add(Pulse.REST);
 		}
-		id = new UUID();
 		
 	}
 
@@ -51,18 +49,19 @@ public final class Onset {
 
 	@Override
 	public String toString() {
-		return getDuration().toString();
+		return getBoxNotation();
 	}
 	@Override
 	public boolean equals(Object obj) {
 		if(obj == null || !(obj instanceof Onset)){
 			return false;
 		}
-		return this.id.equals(((Onset)obj).id);
+		Onset o = (Onset) obj;
+		return this.hashCode() == o.hashCode();
 	}
 
 	@Override
 	public int hashCode() {
-		return id.hashCode();
+		return super.hashCode();
 	}
 }

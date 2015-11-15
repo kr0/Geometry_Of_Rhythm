@@ -1,7 +1,6 @@
 package core;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -19,11 +18,11 @@ import java.util.stream.Collectors;
 public class Timeline {
 
 	// Start Pulse --> Onset Object
-	private Map<Integer, Onset> mPulse2Onsets;
+	protected Map<Integer, Onset> mPulse2Onsets;
 	// Onset Object --> Start Pulse
-	private Map<Onset, Integer> mOnset2Pulse;
+	protected Map<Onset, Integer> mOnset2Pulse;
 	// Array of Onset Objects
-	private List<Onset> mOnsets;
+	protected List<Onset> mOnsets;
 
 	public Timeline() {
 		mPulse2Onsets = new LinkedHashMap<Integer, Onset>();
@@ -42,8 +41,15 @@ public class Timeline {
 			pulse += onsetDuration;
 		}
 		
-		fixOnsetArray();
+		updateOnsetArray();
 
+	}
+	
+	protected Timeline(Map<Integer, Onset> pulseMap){
+		this();
+		this.mPulse2Onsets = pulseMap;
+		updatePulseMaps();
+		updateOnsetArray();
 	}
 
 	public int getOnsetStartPulse(Onset onset) {
@@ -67,8 +73,8 @@ public class Timeline {
 		return mOnsets.stream().map(Onset::getDuration).reduce(0, (a, b) -> a + b);
 	}
 
-	public void deleteOnset(int... onsetNumbers) {
-		if (!isOnsetNumberInRange(onsetNumbers)) {
+	public void removeOnset(int... onsetNumbers) {
+		if (!isOnsetNumbersInRange(onsetNumbers)) {
 			throw new IndexOutOfBoundsException("Onset number does not exist or is less than 0.");
 		}
 	
@@ -86,7 +92,7 @@ public class Timeline {
 	
 	}
 
-	public void insertAtPulse(int insertPulse, int duration, boolean isAccented) throws IllegalArgumentException {
+	public void putOnset(int insertPulse, int duration, boolean isAccented) throws IllegalArgumentException {
 		if (insertPulse < 0) {
 			throw new IllegalArgumentException(String.format("Can not insert at pulse: %d", insertPulse));
 		}
@@ -121,14 +127,14 @@ public class Timeline {
 		mOnset2Pulse.put(newOnset, insertPulse);
 
 		// Fix overlaps in Map
-		fixOverLaps();
+		updatePulseMaps();
 		// Fix onset array
-		fixOnsetArray();
+		updateOnsetArray();
 
 	}
 
-	public void insertAtPulse(int insertPulse, int duration){
-		insertAtPulse(insertPulse, duration, false);
+	public void putOnset(int insertPulse, int duration){
+		putOnset(insertPulse, duration, false);
 	}
 	
 	public void replaceOnset(int onsetNumberToReplace, int duration, boolean isAccented) {
@@ -146,7 +152,10 @@ public class Timeline {
 		replaceOnset(onsetNuberToReplace,duration,false);
 	}
 
-	private boolean isOnsetNumberInRange(int[] onsetNumbers) {
+	/*
+	 * Check if onsetNumberIsInRange
+	 */
+	public boolean isOnsetNumbersInRange(int[] onsetNumbers) {
 		for (int onset : onsetNumbers) {
 			if (onset < 0 || onset >= getOnsetNumber()) {
 				return false;
@@ -155,7 +164,18 @@ public class Timeline {
 		return true;
 	}
 
-	private void fixOnsetArray() {
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null || !(obj instanceof Timeline)) {
+			return false;
+		}
+		return this.getBoxNotationString().equals(((Timeline) obj).getBoxNotationString());
+	}
+
+	/*
+	 * Sets this onset array to match pulse map
+	 */
+	protected void updateOnsetArray() {
 		mOnsets.clear();
 		// Add all the onsets in the pulse maps in order of their pulse
 		mOnsets.addAll(
@@ -163,12 +183,14 @@ public class Timeline {
 				.sorted()
 				.map(mPulse2Onsets::get)
 				.collect(Collectors.toList()));
+		
+		
 	}
 
-	/**
-	 * 
+	/*
+	 * Removes any overlaps, makes pulsemap conform to onset array.
 	 */
-	private void fixOverLaps() {
+	protected void updatePulseMaps() {
 		Iterator<Integer> it = mPulse2Onsets.keySet().iterator();
 		while (it.hasNext()) {
 			int startPulse = it.next();
@@ -184,14 +206,6 @@ public class Timeline {
 				}
 			}
 		}
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == null || !(obj instanceof Timeline)) {
-			return false;
-		}
-		return this.getBoxNotationString().equals(((Timeline) obj).getBoxNotationString());
 	}
 
 }

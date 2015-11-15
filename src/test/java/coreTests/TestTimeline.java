@@ -8,7 +8,6 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import core.Timeline;
-import jdk.nashorn.internal.ir.ThrowNode;
 
 public class TestTimeline {
 
@@ -83,28 +82,28 @@ public class TestTimeline {
 	public void testDeleteOnset() {
 		// remove until empty
 		Timeline t = new Timeline(3, 3, 2);
-		t.deleteOnset(0);
-		t.deleteOnset(0);
-		t.deleteOnset(0);
+		t.removeOnset(0);
+		t.removeOnset(0);
+		t.removeOnset(0);
 		assertTrue(t.getOnsetNumber() == 0);
 		assertTrue(t.getPulseNumber() == 0);
 
 		// remove center onset
 		t = new Timeline(3, 3, 2);
 		t2 = new Timeline(3, 2);
-		t.deleteOnset(1);
+		t.removeOnset(1);
 		assertTrue(t.equals(t2));
 
 		// remove edges
 		t = new Timeline(3, 3, 2);
 		t2 = new Timeline(3);
-		t.deleteOnset(0, 2);
+		t.removeOnset(0, 2);
 		assertTrue(t.equals(t2));
 
 		// remove center
 		t = new Timeline(3, 3, 2);
 		t2 = new Timeline(3,2);
-		t.deleteOnset(1);
+		t.removeOnset(1);
 		assertTrue(t.equals(t2));
 
 	}
@@ -129,22 +128,22 @@ public class TestTimeline {
 		
 	}
 	@Test
-	public void testInsertAtPulse(){
+	public void testputOnset(){
 		
 		Timeline t =  new Timeline(3,3,2);
-		t.insertAtPulse(5, 1);
+		t.putOnset(5, 1);
 		assertTrue(t.getInterOnsetIntervalString().equals("[3-2-1-2]"));
 		
 		t = new Timeline(3,3,2);
-		t.insertAtPulse(5, 3);
+		t.putOnset(5, 3);
 		assertTrue(t.getInterOnsetIntervalString().equals("[3-2-3-2]"));
 		
 		t = new Timeline(3,3,2);
-		t.insertAtPulse(0, 6);
+		t.putOnset(0, 6);
 		assertTrue(t.getInterOnsetIntervalString().equals("[6-3-2]"));
 		
 		t = new Timeline(3,3,2);
-		t.insertAtPulse(8, 6);
+		t.putOnset(8, 6);
 		assertTrue(t.getInterOnsetIntervalString().equals("[3-3-2-6]"));
 		
 	}
@@ -153,14 +152,14 @@ public class TestTimeline {
 	public void testDeleteOnsetThrowsOutOfBounds1() {
 		thrown.expect(IndexOutOfBoundsException.class);
 		Timeline t = new Timeline(3, 3, 2);
-		t.deleteOnset(-1);
+		t.removeOnset(-1);
 	}
 
 	@Test
 	public void testDeleteOnsetThrowsOutOfBounds2() {
 		thrown.expect(IndexOutOfBoundsException.class);
 		Timeline t = new Timeline(3, 3, 2);
-		t.deleteOnset(0, 1, 2, 3);
+		t.removeOnset(0, 1, 2, 3);
 	}
 
 }
