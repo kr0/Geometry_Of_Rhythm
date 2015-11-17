@@ -1,6 +1,9 @@
 package core;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -10,7 +13,7 @@ import java.util.stream.Collectors;
  * @param <E>
  *
  */
-public class Necklace<E> {
+public class Necklace<E> implements Iterable<E> {
 
 	static final int DEFAULT_CAPACITY = 16;
 	private int numberOfElements;
@@ -32,6 +35,7 @@ public class Necklace<E> {
 
 	/**
 	 * The size of this Necklace
+	 * 
 	 * @return
 	 */
 	public int size() {
@@ -168,18 +172,18 @@ public class Necklace<E> {
 		start = Math.floorMod(start, size());
 		end = Math.floorMod(end, size());
 		set(elem, start);
-		while(start!=end){
+		while (start != end) {
 			start++;
 			start = Math.floorMod(start, size());
-			set(elem,start);
+			set(elem, start);
 		}
 		return true;
 	}
 
 	/**
 	 * Increases the size of this necklace by appending n copies of an element
-	 * after the start index. All elements to right of the extension have
-	 * their indices shifted by n.
+	 * after the start index. All elements to right of the extension have their
+	 * indices shifted by n.
 	 * 
 	 * @param elem
 	 *            Element to copy
@@ -193,8 +197,8 @@ public class Necklace<E> {
 	public void extend(int start, E elem, int n) {
 		start = Math.floorMod(start, size());
 		start++;
-		for(int i = 0; i < n; i++){
-			add(elem,start);
+		for (int i = 0; i < n; i++) {
+			add(elem, start);
 		}
 	}
 
@@ -226,7 +230,7 @@ public class Necklace<E> {
 	}
 
 	public String toString(String delimiter) {
-	
+
 		return list.stream().map(Object::toString)
 				.collect(Collectors.joining(delimiter, "[", "]"));
 	}
@@ -273,4 +277,54 @@ public class Necklace<E> {
 		index = Math.floorMod(index, size());
 		return list.get(index);
 	}
+
+	public void add(Collection<E> collection) {
+		for (E elem : collection) {
+			add(elem);
+		}
+
+	}
+
+	private class NecklaceIterator implements Iterator<E>{
+		protected Node tail;
+		protected Node current;
+
+		public NecklaceIterator(Node tail) {
+			this.tail = tail;
+			reset();
+		}
+
+
+		public void reset() {
+			if (tail == null)
+				current = null;
+			else
+				current = tail.next;
+		}
+
+		
+		public boolean hasNext() {
+			return current != null;
+		}
+
+		
+		public E next() {
+			E result = current.data;
+			if (current == tail)
+				current = null;
+			else
+				current = current.next;
+			return result;
+		}
+
+		public E get() {
+			return current.data;
+		}
+	}
+
+	@Override
+	public Iterator<E> iterator() {
+		return new NecklaceIterator(getFirstNode());
+	}
+
 }

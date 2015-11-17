@@ -233,4 +233,28 @@ public class TestNecklace {
 		assertTrue(t.toString().equals("[x...x..x...xx...x]"));
 
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testIterator() throws Exception {
+		Necklace<Pulse> t = new Necklace<Pulse>();
+
+		// number of elements reflects remove()
+		for (int i = 0; i < 16; i++) {
+			if ((i % 2) == 0) {
+				t.add(Pulse.Attack());
+			} else {
+				t.add(Pulse.Rest());
+			}
+		}
+		
+		Necklace<Pulse> tmp = (Necklace<Pulse>)t.clone();
+		StringBuilder sb = new StringBuilder();
+		sb.append("[");
+		for(Pulse p: tmp){
+			sb.append(p);
+		}
+		sb.append("]");
+		assertTrue(sb.toString().equals(tmp.toString()));
+	}
 }
