@@ -3,6 +3,7 @@ package coreTests;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
+
 import core.Necklace;
 import core.Pulse;
 
@@ -48,6 +49,7 @@ public class TestNecklace {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testAddAtIndex() throws Exception {
 		Necklace<Pulse> t = new Necklace<Pulse>();
@@ -102,6 +104,7 @@ public class TestNecklace {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testRemove() throws Exception {
 		Necklace<Pulse> t = new Necklace<Pulse>();

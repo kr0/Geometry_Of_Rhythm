@@ -14,7 +14,7 @@ public class Necklace<E> {
 
 	static final int DEFAULT_CAPACITY = 16;
 	private int numberOfElements;
-	ArrayList<Node<E>> list;
+	ArrayList<Node> list;
 
 	/**
 	 * Creates an empty necklace with default capacity of 16.
@@ -57,13 +57,13 @@ public class Necklace<E> {
 	 * @return
 	 */
 	public void add(E elem) {
-		Node<E> newNode;
+		Node newNode;
 		if (list.size() == 0) {
-			newNode = new Node<E>(elem);
+			newNode = new Node(elem);
 			newNode.prev = newNode;
 			newNode.next = newNode;
 		} else {
-			newNode = new Node<E>(elem, getLastNode(), getFirstNode());
+			newNode = new Node(elem, getLastNode(), getFirstNode());
 		}
 		numberOfElements++;
 		list.add(newNode);
@@ -90,9 +90,9 @@ public class Necklace<E> {
 			return;
 		}
 		index = Math.floorMod(index, size());
-		Node<E> newNode = new Node<E>(elem);
-		Node<E> tail = getNode(index - 1);
-		Node<E> head = getNode(index);
+		Node newNode = new Node(elem);
+		Node tail = getNode(index - 1);
+		Node head = getNode(index);
 		newNode.next = head;
 		tail.next = newNode;
 		head.prev = newNode;
@@ -112,16 +112,16 @@ public class Necklace<E> {
 			return null;
 		} else if (size() == 1) {
 			index = Math.floorMod(index, size());
-			Node<E> res = list.remove(index);
+			Node res = list.remove(index);
 			numberOfElements--;
 			return res.data;
 		}
 		index = Math.floorMod(index, size());
-		Node<E> tail = getNode(index - 1);
-		Node<E> head = getNode(index + 1);
+		Node tail = getNode(index - 1);
+		Node head = getNode(index + 1);
 		tail.next = head;
 		head.prev = tail;
-		Node<E> res = list.remove(index);
+		Node res = list.remove(index);
 		numberOfElements--;
 		return res.data;
 	}
@@ -140,7 +140,7 @@ public class Necklace<E> {
 			return false;
 		}
 		index = Math.floorMod(index, size());
-		Node<E> n = getNode(index);
+		Node n = getNode(index);
 		n.data = elem;
 		return true;
 	}
@@ -231,10 +231,12 @@ public class Necklace<E> {
 				.collect(Collectors.joining(delimiter, "[", "]"));
 	}
 
-	private class Node<E> {
+	private class Node {
 		E data;
-		Node<E> prev;
-		Node<E> next;
+		@SuppressWarnings("unused")
+		Node prev;
+		@SuppressWarnings("unused")
+		Node next;
 
 		Node() {
 			this.prev = this;
@@ -247,7 +249,7 @@ public class Necklace<E> {
 			this.data = elem;
 		}
 
-		Node(E elem, Node<E> prev, Node<E> next) {
+		Node(E elem, Node prev, Node next) {
 			this(elem);
 			this.prev = prev;
 			this.next = next;
@@ -259,15 +261,15 @@ public class Necklace<E> {
 		}
 	}
 
-	private Node<E> getFirstNode() {
+	private Node getFirstNode() {
 		return list.get(0);
 	}
 
-	private Node<E> getLastNode() {
+	private Node getLastNode() {
 		return list.get(numberOfElements - 1);
 	}
 
-	private Node<E> getNode(int index) {
+	private Node getNode(int index) {
 		index = Math.floorMod(index, size());
 		return list.get(index);
 	}
