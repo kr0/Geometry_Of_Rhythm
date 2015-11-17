@@ -1,22 +1,30 @@
 package core;
 
-/**
- * A pulse is either an Attack, a rest, or an Accented attack.
- * These are represented in box notation as "x", ".", and "X" respectively.
- * @author kr0
- *
- */
-enum Pulse {
-	ATTACK("x"), REST("."), ACCENT("X");
-	
+public final class Pulse {
+
 	private String repr;
-	Pulse(String _repr){
+	public static String REST = ".";
+	public static String ACCENT = "X";
+	public static String ATTACK = "x";
+	
+	private Pulse(String _repr){
 		repr = _repr;
+	}
+	
+	public static Pulse Rest(){
+		return new Pulse(REST);
+	}
+	
+	public static Pulse Accent(){
+		return new Pulse(ACCENT);
+	}
+	
+	public static Pulse Attack(){
+		return new Pulse(ATTACK);
 	}
 	
 	@Override
 	public String toString() {
 		return repr;
 	}
-	
 }
