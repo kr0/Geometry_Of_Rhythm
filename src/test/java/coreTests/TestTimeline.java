@@ -9,12 +9,75 @@ import core.Timeline;
 
 public class TestTimeline {
 
+	private Timeline t1;
+	private Timeline t2;
+	private String t1Box;
+	private String t1IOI;
+
 	@Before
 	public void setUp() throws Exception {
+		t1 = new Timeline();
+		t1.addOnset(3);
+		t1.addOnset(3);
+		t1.addOnset(2);
+		t1Box = "[x..x..x.]";
+		t1IOI = "[3-3-2]";
+		
+		t2 = new Timeline(3,3,2);
+		
+		
+	}
+	
+	@Test
+	public void testBoxNotation() throws Exception {
+		assertTrue(t1.getBoxNotation().equals(t1Box));
+		assertTrue(t1.getBoxNotation().equals(t2.getBoxNotation()));
+	}
+	
+	@Test
+	public void testInterOnsetIntervalString() throws Exception {
+		assertTrue(t1.getInterOnsetIntervals().equals(t1IOI));
+		assertTrue(t1.getInterOnsetIntervals().equals(t2.getInterOnsetIntervals()));
+	}
+	
+	@Test
+	public void testGetOnsetNumberFromPulse() throws Exception {
+		int o1 = t1.getOnsetNumber(2);
+		int o2 = t1.getOnsetNumber(3);
+		int o22 = t1.getOnsetNumber(4);
+		int o3 = t1.getOnsetNumber(7);
+		assertTrue(o1 == 1);
+		assertTrue(o2 == 2);
+		assertTrue(o22 == 2);
+		assertTrue(o3 == 3);
+	
+	
 	}
 
 	@Test
-	public void testAddOnset() {
+	public void testAddOnset() throws CloneNotSupportedException {
+		// number of onsets increases
+		Timeline tmp = (Timeline)t1.clone();
+		assertTrue(t1.getNumberOfOnsets() == 3);
+		assertTrue(tmp.getNumberOfOnsets() == t1.getNumberOfOnsets());
+		int count = 3;
+		for(int i = 0; i<count; i++){
+			tmp.addOnset(1);
+		}
+		int newSize = t1.getNumberOfOnsets() + count;
+		assertTrue(tmp.getNumberOfOnsets() == newSize);
+		
+		// Adds pulses in correct place
+		System.out.println(tmp.getBoxNotation());
+		assertTrue(tmp.getBoxNotation().equals("[x..x..x.xxx]"));
+		
+		// DataStructure resizes without issue
+		count = 100;
+		for(int i = 0; i<count; i++){
+			tmp.addOnset(1);
+		}
+		newSize = newSize + count;
+		assertTrue(tmp.getNumberOfOnsets() == newSize);
 		
 	}
 

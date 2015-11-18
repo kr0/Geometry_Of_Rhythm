@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 import com.google.common.collect.Iterators;
 
 /**
- * A necklace is an circular array list
+ * A necklace is a circular array list
  * 
  * @author kr0
  * @param <E>
