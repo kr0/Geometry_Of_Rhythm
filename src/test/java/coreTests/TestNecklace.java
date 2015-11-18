@@ -2,6 +2,8 @@ package coreTests;
 
 import static org.junit.Assert.*;
 
+import java.util.Iterator;
+
 import org.junit.Test;
 
 import core.Necklace;
@@ -234,6 +236,35 @@ public class TestNecklace {
 
 	}
 	
+	@Test
+	public void testCyclicIterator() throws Exception {
+		Necklace<Pulse> t = new Necklace<Pulse>();
+
+		// number of elements reflects remove()
+		for (int i = 0; i < 16; i++) {
+			if ((i % 2) == 0) {
+				t.add(Pulse.Attack());
+			} else {
+				t.add(Pulse.Rest());
+			}
+		}
+		t.add(Pulse.Attack());
+		t.add(Pulse.Attack());
+		t.add(Pulse.Attack());
+		
+		// Will cycle forever in correct order
+		int count = 0;
+		int cycles = 3;
+		Iterator<Pulse> it = t.cycle();
+		while(count < (t.size() * cycles)){
+			assertTrue(it.hasNext());
+			Pulse pulseFromCyclicIterator = it.next();
+			Pulse pulseFromNecklaceAccess = t.get(count);
+			assertTrue(pulseFromCyclicIterator.equals(pulseFromNecklaceAccess));
+			count++;
+		}
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testIterator() throws Exception {
@@ -257,4 +288,8 @@ public class TestNecklace {
 		sb.append("]");
 		assertTrue(sb.toString().equals(tmp.toString()));
 	}
+	
+
+	
+	
 }

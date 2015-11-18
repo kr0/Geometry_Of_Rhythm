@@ -6,6 +6,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.google.common.collect.Iterators;
+
 /**
  * A necklace is an circular array list
  * 
@@ -16,21 +18,18 @@ import java.util.stream.Collectors;
 public class Necklace<E> implements Iterable<E> {
 
 	static final int DEFAULT_CAPACITY = 16;
-	private int numberOfElements;
-	ArrayList<Node> list;
+	ArrayList<E> list;
 
 	/**
 	 * Creates an empty necklace with default capacity of 16.
 	 */
 	public Necklace() {
 		list = new ArrayList<>(DEFAULT_CAPACITY);
-		numberOfElements = 0;
 
 	}
 
 	Necklace(int capacity) {
 		list = new ArrayList<>(capacity);
-		numberOfElements = 0;
 	}
 
 	/**
@@ -39,7 +38,7 @@ public class Necklace<E> implements Iterable<E> {
 	 * @return
 	 */
 	public int size() {
-		return numberOfElements;
+		return list.size();
 	}
 
 	/**
@@ -50,7 +49,7 @@ public class Necklace<E> implements Iterable<E> {
 	 */
 	public E get(int index) {
 		index = Math.floorMod(index, size());
-		return list.get(index).data;
+		return list.get(index);
 	}
 
 	/**
@@ -61,16 +60,8 @@ public class Necklace<E> implements Iterable<E> {
 	 * @return
 	 */
 	public void add(E elem) {
-		Node newNode;
-		if (list.size() == 0) {
-			newNode = new Node(elem);
-			newNode.prev = newNode;
-			newNode.next = newNode;
-		} else {
-			newNode = new Node(elem, getLastNode(), getFirstNode());
-		}
-		numberOfElements++;
-		list.add(newNode);
+		
+		list.add(elem);
 
 	}
 
@@ -94,14 +85,7 @@ public class Necklace<E> implements Iterable<E> {
 			return;
 		}
 		index = Math.floorMod(index, size());
-		Node newNode = new Node(elem);
-		Node tail = getNode(index - 1);
-		Node head = getNode(index);
-		newNode.next = head;
-		tail.next = newNode;
-		head.prev = newNode;
-		list.add(index, newNode);
-		numberOfElements++;
+		list.add(index, elem);
 	}
 
 	/**
@@ -114,20 +98,12 @@ public class Necklace<E> implements Iterable<E> {
 	public E remove(int index) {
 		if (size() == 0) {
 			return null;
-		} else if (size() == 1) {
-			index = Math.floorMod(index, size());
-			Node res = list.remove(index);
-			numberOfElements--;
-			return res.data;
-		}
-		index = Math.floorMod(index, size());
-		Node tail = getNode(index - 1);
-		Node head = getNode(index + 1);
-		tail.next = head;
-		head.prev = tail;
-		Node res = list.remove(index);
-		numberOfElements--;
-		return res.data;
+		} 
+		return list.remove(wrapIndex(index));
+	}
+
+	private int wrapIndex(int index) {
+		return Math.floorMod(index, size());
 	}
 
 	/**
@@ -144,8 +120,7 @@ public class Necklace<E> implements Iterable<E> {
 			return false;
 		}
 		index = Math.floorMod(index, size());
-		Node n = getNode(index);
-		n.data = elem;
+		list.set(index, elem);
 		return true;
 	}
 
@@ -206,7 +181,6 @@ public class Necklace<E> implements Iterable<E> {
 	public Object clone() throws CloneNotSupportedException {
 		Necklace<E> newNecklace = new Necklace<>();
 		newNecklace.list = new ArrayList<>(this.list);
-		newNecklace.numberOfElements = this.numberOfElements;
 		return newNecklace;
 	}
 
@@ -265,18 +239,7 @@ public class Necklace<E> implements Iterable<E> {
 		}
 	}
 
-	private Node getFirstNode() {
-		return list.get(0);
-	}
-
-	private Node getLastNode() {
-		return list.get(numberOfElements - 1);
-	}
-
-	private Node getNode(int index) {
-		index = Math.floorMod(index, size());
-		return list.get(index);
-	}
+	
 
 	public void add(Collection<E> collection) {
 		for (E elem : collection) {
@@ -285,46 +248,16 @@ public class Necklace<E> implements Iterable<E> {
 
 	}
 
-	private class NecklaceIterator implements Iterator<E>{
-		protected Node tail;
-		protected Node current;
 
-		public NecklaceIterator(Node tail) {
-			this.tail = tail;
-			reset();
-		}
-
-
-		public void reset() {
-			if (tail == null)
-				current = null;
-			else
-				current = tail.next;
-		}
-
-		
-		public boolean hasNext() {
-			return current != null;
-		}
-
-		
-		public E next() {
-			E result = current.data;
-			if (current == tail)
-				current = null;
-			else
-				current = current.next;
-			return result;
-		}
-
-		public E get() {
-			return current.data;
-		}
-	}
 
 	@Override
 	public Iterator<E> iterator() {
-		return new NecklaceIterator(getFirstNode());
+		return list.iterator();
 	}
+	
+	public Iterator<E> cycle(){
+		return Iterators.cycle(this);
+	}
+	
 
 }

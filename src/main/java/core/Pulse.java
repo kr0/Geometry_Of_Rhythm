@@ -27,4 +27,12 @@ public final class Pulse {
 	public String toString() {
 		return repr;
 	}
+	@Override
+	public boolean equals(Object obj) {
+		if(obj == null || !(obj instanceof Pulse)){
+			return false;
+		}
+		Pulse o = (Pulse)obj;
+		return this.repr.equals(o.repr);
+	}
 }
