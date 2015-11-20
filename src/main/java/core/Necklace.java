@@ -48,7 +48,7 @@ public class Necklace<E> implements Iterable<E> {
 	 * @return
 	 */
 	public E get(int index) {
-		index = Math.floorMod(index, size());
+		index = wrapindex(index);
 		return list.get(index);
 	}
 
@@ -84,8 +84,15 @@ public class Necklace<E> implements Iterable<E> {
 			add(elem);
 			return;
 		}
-		index = Math.floorMod(index, size());
+		index = wrapindex(index);
 		list.add(index, elem);
+	}
+
+	public void add(Collection<E> collection) {
+		for (E elem : collection) {
+			add(elem);
+		}
+	
 	}
 
 	/**
@@ -99,12 +106,10 @@ public class Necklace<E> implements Iterable<E> {
 		if (size() == 0) {
 			return null;
 		} 
-		return list.remove(wrapIndex(index));
+		return list.remove(wrapindex(index));
 	}
 
-	private int wrapIndex(int index) {
-		return Math.floorMod(index, size());
-	}
+	
 
 	/**
 	 * Sets index to elem.
@@ -119,7 +124,7 @@ public class Necklace<E> implements Iterable<E> {
 		if (size() == 0) {
 			return false;
 		}
-		index = Math.floorMod(index, size());
+		index = wrapindex(index);
 		list.set(index, elem);
 		return true;
 	}
@@ -144,12 +149,12 @@ public class Necklace<E> implements Iterable<E> {
 			return false;
 		}
 
-		start = Math.floorMod(start, size());
-		end = Math.floorMod(end, size());
+		start = wrapindex(start);
+		end = wrapindex(end);
 		set(elem, start);
 		while (start != end) {
 			start++;
-			start = Math.floorMod(start, size());
+			start = wrapindex(start);
 			set(elem, start);
 		}
 		return true;
@@ -170,11 +175,24 @@ public class Necklace<E> implements Iterable<E> {
 	 * @return
 	 */
 	public void extend(int start, E elem, int n) {
-		start = Math.floorMod(start, size());
+		start = wrapindex(start);
 		start++;
 		for (int i = 0; i < n; i++) {
 			add(elem, start);
 		}
+	}
+
+	public int wrapindex(int index) {
+		return Math.floorMod(index, size());
+	}
+
+	public Iterator<E> cycle(){
+		return Iterators.cycle(this);
+	}
+
+	@Override
+	public Iterator<E> iterator() {
+		return list.iterator();
 	}
 
 	@Override
@@ -237,26 +255,6 @@ public class Necklace<E> implements Iterable<E> {
 		public String toString() {
 			return data.toString();
 		}
-	}
-
-	
-
-	public void add(Collection<E> collection) {
-		for (E elem : collection) {
-			add(elem);
-		}
-
-	}
-
-
-
-	@Override
-	public Iterator<E> iterator() {
-		return list.iterator();
-	}
-	
-	public Iterator<E> cycle(){
-		return Iterators.cycle(this);
 	}
 	
 

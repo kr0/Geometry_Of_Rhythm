@@ -68,7 +68,6 @@ public class TestTimeline {
 		assertTrue(tmp.getNumberOfOnsets() == newSize);
 		
 		// Adds pulses in correct place
-		System.out.println(tmp.getBoxNotation());
 		assertTrue(tmp.getBoxNotation().equals("[x..x..x.xxx]"));
 		
 		// DataStructure resizes without issue
@@ -79,6 +78,15 @@ public class TestTimeline {
 		newSize = newSize + count;
 		assertTrue(tmp.getNumberOfOnsets() == newSize);
 		
+	}
+	
+	@Test
+	public void testRemoveOnset() throws Exception {
+		Timeline tmp = (Timeline)t1.clone();
+		t1.removeOnset(2);
+		
+		//TODO: removeonset tests
+
 	}
 
 }
