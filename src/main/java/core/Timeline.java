@@ -1,27 +1,22 @@
 package core;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Queue;
 import java.util.Set;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Function;
-import com.google.common.base.Functions;
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.DiscreteDomain;
 import com.google.common.collect.HashBiMap;
-import com.google.common.collect.Iterators;
-import com.google.common.collect.Maps;
+import com.google.common.collect.Range;
 import com.google.common.collect.RangeMap;
 import com.google.common.collect.TreeRangeMap;
-import com.google.common.collect.Range;
-import com.google.common.collect.TreeRangeSet;
 
 public class Timeline {
 
@@ -97,12 +92,12 @@ public class Timeline {
 	}
 
 	public void extendOnset(int onsetnumber, int n) {
-	
+
 	}
 
 	public void placeOnset(int start, int end, boolean isAccent)
 			throws IllegalArgumentException {
-	
+
 	}
 
 	public void addPulse(int pulse, int duration, Boolean isAccent) {
@@ -112,24 +107,50 @@ public class Timeline {
 		}
 	}
 
-	public void removeOnset(int numberOfOnsetToRemove) {
-		isValidOnsetNumber(numberOfOnsetToRemove);
-		Range<Integer> onsetToRemove = getRangeOf(numberOfOnsetToRemove);
-
+	public void removeOnset(int onsetNumberToRemove)
+			throws IllegalArgumentException {
+		Range<Integer> onsetToRemove = getRangeOf(onsetNumberToRemove);
+		if (onsetToRemove == null) {
+			return;
+		}
 		// remove from rangemap
 		onsets.remove(onsetToRemove);
-		onsetnumber2Range.remove(numberOfOnsetToRemove);
+		onsetnumber2Range.remove(onsetNumberToRemove);
+		setPulse(onsetToRemove, Pulse.REST);
+		numberOfOnsets--;
 
-		if (numberOfOnsetToRemove > 1) {
-			Range<Integer> prevOnset = getRangeOf(numberOfOnsetToRemove - 1);
+		// make adjustments to reflect removal
+		if (onsetNumberToRemove == 1) {
+			// Case where we removed first onset
+
+			// Rotate timeline left by length of removed onset
+			int lengthOfOnsetRange = Math.abs(onsetToRemove.upperEndpoint()
+					- onsetToRemove.lowerEndpoint());
+			rotateBy(-1 * lengthOfOnsetRange);
+
+			// Decrease all onset numbers by 1;
+			applyToOnsetNumbers(new Function<Integer, Integer>() {
+				@Override
+				public Integer apply(Integer input) {
+					input--;
+					return input;
+				}
+
+			}, Predicates.alwaysTrue());
+
+		} else {
+			// Case where we removed any onset after the firsts
+
 			// Extend previous
+			Range<Integer> prevOnset = getRangeOf(onsetNumberToRemove - 1);
 			Range<Integer> extendedPreviousOnset = Range.closed(
 					prevOnset.lowerEndpoint(), onsetToRemove.upperEndpoint());
-			onsets.put(extendedPreviousOnset, getOnsetNumberFromRange(prevOnset));
+			onsets.put(extendedPreviousOnset,
+					getOnsetNumberFromRange(prevOnset));
 			onsetnumber2Range.put(getOnsetNumberFromRange(prevOnset),
 					extendedPreviousOnset);
 
-			// adjust onsets to the right of remove point
+			// Increase onset numbers to the right of remove point
 			applyToOnsetNumbers(new Function<Integer, Integer>() {
 				@Override
 				public Integer apply(Integer input) {
@@ -140,10 +161,91 @@ public class Timeline {
 			}, new Predicate<Integer>() {
 				@Override
 				public boolean apply(Integer input) {
-					return input > numberOfOnsetToRemove;
+					input = wrapOnsetIndex(input);
+					return input > onsetNumberToRemove;
 				}
 			});
 		}
+
+	}
+
+	public void rotateBy(int i) {
+		applyToRanges(new Function<Range<Integer>, Range<Integer>>() {
+
+			@Override
+			public Range<Integer> apply(Range<Integer> input) {
+				// Shift endpoints by rotation amount
+				int lower = input.lowerEndpoint() + i;
+				lower = pulses.wrapindex(lower);
+				int upper = input.upperEndpoint() + i;
+				upper = pulses.wrapindex(upper);
+				return Range.closed(lower, upper);
+			}
+
+		}, Predicates.alwaysTrue());
+
+		renumberOnsets();
+		pulses.rotateBy(i);
+
+	}
+
+	private void renumberOnsets() {
+		int newOnsetNumber = 1;
+		
+		for (Entry<Range<Integer>, Integer> entry : onsetnumber2Range
+				.inverse().entrySet()) {
+			entry.setValue(newOnsetNumber);
+			onsets.put(entry.getKey(), newOnsetNumber);
+			newOnsetNumber++;
+		}
+
+		
+		
+
+	}
+
+	protected void applyToRanges(Function<Range<Integer>, Range<Integer>> f,
+			Predicate<Range<Integer>> p) {
+		Set<Range<Integer>> transformedOnsets = new HashSet<Range<Integer>>();
+		for (Entry<Integer, Range<Integer>> entry : onsetnumber2Range
+				.entrySet()) {
+			Integer onsetnumber = entry.getKey();
+			Range<Integer> onsetrange = entry.getValue();
+
+			if (p.apply(onsetrange)) {
+				Range<Integer> newOnsetRange = f.apply(onsetrange);
+				onsets.remove(onsetrange);
+				onsets.put(newOnsetRange, onsetnumber);
+				transformedOnsets.add(onsetrange);
+			}
+		}
+
+		for (Range<Integer> onsetrange : transformedOnsets) {
+			onsetnumber2Range.compute(getOnsetNumberFromRange(onsetrange), (k,
+					v) -> f.apply(v));
+		}
+
+		// TODO make adjustments to necklace
+
+	}
+
+	/**
+	 * Wraps the input to an onset number modulo the number of onsets + 1. Note
+	 * that onset "0" maps to 1 because conceptually we refer to onset numbers
+	 * starting from an index of 1. This is in accordance with the language of
+	 * Geometry of Rhythm.
+	 * 
+	 * @param input
+	 * @return
+	 */
+	protected Integer wrapOnsetIndex(Integer input) {
+		return Math.floorMod(input, numberOfOnsets) + 1;
+	}
+
+	private void setPulse(Range<Integer> onsetToRemove, Pulse rest) {
+		pulses.set(rest, onsetToRemove.lowerEndpoint(),
+				onsetToRemove.upperEndpoint());
+
 	}
 
 	public int size() {
@@ -182,9 +284,9 @@ public class Timeline {
 		clone.onsets = TreeRangeMap.create();
 		clone.onsets.putAll(this.onsets);
 		clone.pulses = (Necklace<Pulse>) this.pulses.clone();
+		clone.onsetnumber2Range = this.onsetnumber2Range;
 		return clone;
 	}
-
 
 	/**
 	 * Applies a function f to every onset number in this timeline if it matches
@@ -195,13 +297,13 @@ public class Timeline {
 	 */
 	protected void applyToOnsetNumbers(Function<Integer, Integer> f,
 			Predicate<Integer> p) {
-	
+
 		Set<Integer> transformedOnsets = new HashSet<Integer>();
 		for (Entry<Integer, Range<Integer>> entry : onsetnumber2Range
 				.entrySet()) {
 			int onsetnumber = entry.getKey();
 			Range<Integer> onsetrange = entry.getValue();
-	
+
 			if (p.apply(onsetnumber)) {
 				int newOnsetnumber = f.apply(onsetnumber);
 				onsets.remove(onsetrange);
@@ -209,7 +311,7 @@ public class Timeline {
 				transformedOnsets.add(onsetnumber);
 			}
 		}
-	
+
 		for (Integer onsetnumber : transformedOnsets) {
 			onsetnumber2Range.inverse().compute(getRangeOf(onsetnumber),
 					(k, v) -> f.apply(v));
@@ -225,7 +327,7 @@ public class Timeline {
 	protected Integer getOnsetNumberFromRange(Range<Integer> onset) {
 		return onsetnumber2Range.inverse().get(onset);
 	}
-	
+
 	public void isValidOnsetDuration(int duration) {
 		if (duration < 1) {
 			throw new IllegalArgumentException("Duration of onset must be >= 1");
@@ -239,5 +341,4 @@ public class Timeline {
 		}
 
 	}
-
 }

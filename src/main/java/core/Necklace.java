@@ -2,11 +2,14 @@ package core;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
 
 /**
  * A necklace is a circular array list
@@ -255,6 +258,11 @@ public class Necklace<E> implements Iterable<E> {
 		public String toString() {
 			return data.toString();
 		}
+	}
+
+	public void rotateBy(int i) {
+		Collections.rotate(list, i);
+		
 	}
 	
 
