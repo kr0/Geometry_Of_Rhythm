@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Observer;
 import java.util.stream.Collectors;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 
@@ -238,36 +237,7 @@ public class Necklace<E> implements Iterable<E> {
 				.collect(Collectors.joining(delimiter, "[", "]"));
 	}
 
-	private class Node {
-		E data;
-		@SuppressWarnings("unused")
-		Node prev;
-		@SuppressWarnings("unused")
-		Node next;
-
-		Node() {
-			this.prev = this;
-			this.next = this;
-			this.data = null;
-		}
-
-		Node(E elem) {
-			this();
-			this.data = elem;
-		}
-
-		Node(E elem, Node prev, Node next) {
-			this(elem);
-			this.prev = prev;
-			this.next = next;
-		}
-
-		@Override
-		public String toString() {
-			return data.toString();
-		}
-	}
-
 	
+
 
 }
