@@ -82,92 +82,47 @@ public class TestTimeline {
 		Timeline tmp = new Timeline(3,3,2);
 		
 		// Remove onsets from right to left
-		// Shows that removeOnset changes number of elements
-		// and replaces with rests. 
+		// check that method:
+		// changes number of elements,
+		// replaces correct pulses with rests,
+		// change is reflected in box notation and interonset interval
 
 		assertTrue(tmp.getInterOnsetIntervals().equals("[3-3-2]"));
 		assertTrue(tmp.getBoxNotation().equals("[x..x..x.]"));
 		assertTrue(tmp.getNumberOfOnsets() == 3);
 		
-		System.out.println("Remove: " + tmp.getOnset(2));
-		System.out.println(tmp.getOnsets());
-		System.out.println(tmp.getBoxNotation());
-		System.out.println(tmp.getInterOnsetIntervals());
 		tmp.removeOnset(2);
-		System.out.println(">>>");
-		System.out.println(tmp.getInterOnsetIntervals());
-		System.out.println(tmp.getBoxNotation());
 		assertTrue(tmp.getInterOnsetIntervals().equals("[3-5]"));
 		assertTrue(tmp.getBoxNotation().equals("[x..x....]"));
 		assertTrue(tmp.getNumberOfOnsets() == 2);
 		
-		System.out.println("Remove: " + tmp.getOnset(1));
-		System.out.println(tmp.getOnsets());
-		System.out.println(tmp.getBoxNotation());
-		System.out.println(tmp.getInterOnsetIntervals());
 		tmp.removeOnset(1);
-		System.out.println(">>>");
-		System.out.println(tmp.getInterOnsetIntervals());
-		System.out.println(tmp.getBoxNotation());
 		assertTrue(tmp.getInterOnsetIntervals().equals("[8]"));
 		assertTrue(tmp.getBoxNotation().equals("[x.......]"));
 		assertTrue(tmp.getNumberOfOnsets() == 1);
 		
-		System.out.println("Remove: " + tmp.getOnset(0));
-		System.out.println(tmp.getOnsets());
-		System.out.println(tmp.getBoxNotation());
-		System.out.println(tmp.getInterOnsetIntervals());
 		tmp.removeOnset(0);
-		System.out.println(">>>");
-		System.out.println(tmp.getInterOnsetIntervals());
-		System.out.println(tmp.getBoxNotation());
 		assertTrue(tmp.getInterOnsetIntervals().equals("[]"));
 		assertTrue(tmp.getBoxNotation().equals("[........]"));
 		assertTrue(tmp.getNumberOfOnsets() == 0);
 		
 		// Remove onsets from left to right
 		tmp = (Timeline) t1.clone();
-		System.out.println("Remove: " + tmp.getOnset(0));
-		System.out.println(tmp.getOnsets());
-		System.out.println(tmp.getBoxNotation());
-		System.out.println(tmp.getInterOnsetIntervals());
 		tmp.removeOnset(0);
-		System.out.println(">>>");
-		System.out.println(tmp.getInterOnsetIntervals());
-		System.out.println(tmp.getBoxNotation());
 		assertTrue(tmp.getInterOnsetIntervals().equals("[3-5]"));
 		assertTrue(tmp.getBoxNotation().equals("[...x..x.]"));
 		assertTrue(tmp.getNumberOfOnsets() == 2);
 		
-		System.out.println("Remove: " + tmp.getOnset(0));
-		System.out.println(tmp.getOnsets());
-		System.out.println(tmp.getBoxNotation());
-		System.out.println(tmp.getInterOnsetIntervals());
 		tmp.removeOnset(0);
-		System.out.println(">>>");
-		System.out.println(tmp.getInterOnsetIntervals());
-		System.out.println(tmp.getBoxNotation());
 		assertTrue(tmp.getInterOnsetIntervals().equals("[8]"));
 		assertTrue(tmp.getBoxNotation().equals("[......x.]"));
 		assertTrue(tmp.getNumberOfOnsets() == 1);
 		
-		
-		System.out.println("Remove: " + tmp.getOnset(0));
-		System.out.println(tmp.getOnsets());
-		System.out.println(tmp.getBoxNotation());
-		System.out.println(tmp.getInterOnsetIntervals());
 		tmp.removeOnset(0);
-		System.out.println(">>>");
-		System.out.println(tmp.getOnsets());
-		System.out.println(tmp.getInterOnsetIntervals());
-		System.out.println(tmp.getBoxNotation());
 		assertTrue(tmp.getInterOnsetIntervals().equals("[]"));
 		assertTrue(tmp.getBoxNotation().equals("[........]"));
 		assertTrue(tmp.getNumberOfOnsets() == 0);
 		
-		
-		
-
 	}
 
 }
