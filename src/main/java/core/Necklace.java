@@ -209,7 +209,7 @@ public class Necklace<E> implements Iterable<E> {
 	@Override
 	public Object clone() throws CloneNotSupportedException {
 		Necklace<E> newNecklace = new Necklace<>();
-		newNecklace.list = new ArrayList<>(this.list);
+		newNecklace.list = Lists.newArrayList(this.list);
 		return newNecklace;
 	}
 

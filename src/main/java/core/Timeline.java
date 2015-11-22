@@ -96,25 +96,51 @@ public class Timeline {
 	}
 
 	public void removeOnset(Onset removeOnset) throws IllegalArgumentException {
+		int numberToRemove = getOnsetNumber(removeOnset);
+
 		// replace onset pulses with rests
 		pulses.set(Pulse.REST, removeOnset.start(), removeOnset.end());
- 
-		// merge previous onset with removed one
-		Onset prevOnset = getOnset(getOnsetNumber(removeOnset)-1);
-		prevOnset.range = Range.closed(prevOnset.start(), removeOnset.end());
-		
-		// reduce onset ids to reflect removal
-		int numberToRemove = getOnsetNumber(removeOnset);
-		for (int i = numberOfOnsets; i > numberToRemove; i--) {
-			onsets.forcePut(i-1, onsets.get(i));
+
+		if (numberToRemove > 0) {
+			// merge previous onset with removed one
+			System.out.println(onsets);
+			Onset prevOnset = getOnset(getOnsetNumber(removeOnset) - 1);
+			prevOnset.setRange(prevOnset.start(), removeOnset.end());
+			onsets.forcePut(prevOnset.id(), prevOnset);
+			onsets.remove(numberToRemove);
+
+			// decrement
+			numberOfOnsets--;
+			System.out.println(onsets);
+
+			// reduce onset ids to reflect removal
+			for (int i = numberOfOnsets; i > numberToRemove; i--) {
+				Onset adjOnset = getOnset(i);
+				adjOnset.setId(i - 1);
+				onsets.forcePut(i - 1, adjOnset);
+			}
+		} else if (numberToRemove == 0 && numberOfOnsets > 1) {
+			// extend previous onset
+			Onset prevOnset = getOnset(getOnsetNumber(removeOnset) - 1);
+			prevOnset.setRange(prevOnset.start(), prevOnset.end() + removeOnset.duration());
+			onsets.forcePut(prevOnset.id(), prevOnset);
+			onsets.remove(numberToRemove);
+	
+			numberOfOnsets--;
+			
+			// shift ranges
+			for (int i = numberOfOnsets; i > numberToRemove; i--) {
+				
+				Onset adjOnset = getOnset(i);
+				adjOnset.shift(-1 * removeOnset.duration());
+				onsets.forcePut(i - 1, adjOnset);
+			}			
+			
+		} else if (numberToRemove == 0){
+			onsets.remove(numberToRemove);
+			numberOfOnsets--;
 		}
-		
-		// remove null entry
-		onsets.remove(numberToRemove);
-		
-		// decrement
-		numberOfOnsets--;
-		
+
 	}
 
 	public void removeOnset(int i) {
@@ -151,8 +177,8 @@ public class Timeline {
 	@Override
 	public Object clone() throws CloneNotSupportedException {
 		Timeline clone = new Timeline();
-		clone.numberOfOnsets = this.numberOfOnsets;
-		clone.onsets.putAll(this.onsets);
+		clone.numberOfOnsets = new Integer(this.numberOfOnsets);
+		clone.onsets = HashBiMap.create(this.onsets);
 		clone.pulses = (Necklace<Pulse>) this.pulses.clone();
 		return clone;
 	}

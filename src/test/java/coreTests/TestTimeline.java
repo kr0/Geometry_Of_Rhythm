@@ -25,8 +25,7 @@ public class TestTimeline {
 		t1IOI = "[3-3-2]";
 		
 		t2 = new Timeline(3,3,2);
-		
-		
+				
 	}
 	
 	@Test
@@ -80,7 +79,7 @@ public class TestTimeline {
 	
 	@Test
 	public void testRemoveOnset() throws Exception {
-		Timeline tmp = (Timeline)t1.clone();
+		Timeline tmp = new Timeline(3,3,2);
 		
 		// Remove onsets from right to left
 		// Shows that removeOnset changes number of elements
@@ -109,6 +108,8 @@ public class TestTimeline {
 		assertTrue(tmp.getBoxNotation().equals("[x..x..x.]"));
 		assertTrue(tmp.getNumberOfOnsets() == 3);
 		tmp.removeOnset(0);
+		System.out.println(tmp.getBoxNotation());
+		System.out.println(tmp.getInterOnsetIntervals());
 		assertTrue(tmp.getInterOnsetIntervals().equals("[5-2]"));
 		assertTrue(tmp.getBoxNotation().equals("[...x..x.]"));
 		assertTrue(tmp.getNumberOfOnsets() == 2);

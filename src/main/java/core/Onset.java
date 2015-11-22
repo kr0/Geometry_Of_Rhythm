@@ -14,7 +14,7 @@ public final class Onset implements Comparable<Onset>{
 
 	protected Range<Integer> range;
 	private boolean isAccent;
-	private Integer id;
+	protected Integer id;
 	
 	public Onset(int start, int duration, int id, boolean isAccent) throws IllegalArgumentException{
 		if(duration < 1){
@@ -59,6 +59,29 @@ public final class Onset implements Comparable<Onset>{
 	public int compareTo(Onset o) {
 		return this.range.lowerEndpoint().compareTo(o.range.lowerEndpoint());
 	}
+
+	
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		Onset o = new Onset(start(), duration(), id());
+		return o;
+	}
+
+	public void setRange(Integer start, Integer end) {
+		this.range = Range.closed(start, end);
+		
+	}
+
+	public void setId(int i) {
+		this.id = i;
+		
+	}
+
+	public void shift(Integer offset) {
+		this.range = Range.closed(start() + offset, end() + offset)
+		
+	}
+	
 	
 	
 	
