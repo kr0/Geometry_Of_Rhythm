@@ -61,6 +61,10 @@ public class Timeline {
 
 	}
 
+	public void insertOnset(int pulse, Onset o) {
+		insertOnset(pulse, o.duration(), o.isAccent());
+	}
+
 	/**
 	 * Inserts a new onset starting at a specific pulse. All subsequent pulses
 	 * are shifted to the right to make space.
@@ -85,15 +89,6 @@ public class Timeline {
 
 		// Increment
 		numberOfOnsets++;
-	}
-
-	public void insertOnset(int pulse, Onset o) {
-		insertOnset(pulse, o.duration(), o.isAccent());
-	}
-
-	public void replaceOnset(Onset onset, boolean isAccent)
-			throws IllegalArgumentException {
-		// TODO
 	}
 
 	public void removeOnset(Onset removeOnset) throws IllegalArgumentException {
@@ -123,12 +118,21 @@ public class Timeline {
 
 	}
 
+	public void replaceOnset(Onset onset, boolean isAccent)
+			throws IllegalArgumentException {
+		// TODO
+	}
+
 	public void removeOnset(int i) {
 		removeOnset(getOnset(i));
 	}
 
 	public void doRotatation(int i) {
-		// TODO
+		pulses.rotateBy(i);
+		onsets.forEach((k,v) ->
+				onsets.merge(k, v, (key,val) -> {
+					val.shift(i);
+					return val;}));
 	}
 
 	public String getBoxNotation() {

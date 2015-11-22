@@ -74,7 +74,10 @@ public class TestTimeline {
 		assertTrue(tmp.getInterOnsetIntervals().equals("[3-3-2]"));
 		assertTrue(tmp.getBoxNotation().equals("[x..x..x.]"));
 		assertTrue(tmp.getNumberOfOnsets() == 3);
-		
+		tmp.doRotatation(3);
+		System.out.println(tmp.getBoxNotation());
+		System.out.println(tmp.getInterOnsetIntervals());
+		System.out.println(tmp.getOnsets());
 	}
 	
 	@Test
