@@ -129,10 +129,15 @@ public class Timeline {
 
 	public void doRotatation(int i) {
 		pulses.rotateBy(i);
-		onsets.forEach((k,v) ->
-				onsets.merge(k, v, (key,val) -> {
+		onsets.forEach((onsetnumber,onset) ->
+				onsets.merge(onsetnumber, onset, (key,val) -> {
+					// temporary rest
+					pulses.set(Pulse.REST, onset.start());
 					val.shift(i);
+					// fill in attack in new location
+					pulses.set((val.isAccent() ? Pulse.ACCENT : Pulse.ATTACK), onset.start());
 					return val;}));
+		
 	}
 
 	public String getBoxNotation() {
