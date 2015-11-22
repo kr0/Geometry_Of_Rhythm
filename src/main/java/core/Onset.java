@@ -1,5 +1,7 @@
 package core;
 
+import java.util.Comparator;
+
 import com.google.common.collect.Range;
 
 /**
@@ -10,7 +12,7 @@ import com.google.common.collect.Range;
  * @author kr0
  *
  */
-public final class Onset implements Comparable<Onset>{
+public final class Onset{
 
 	protected Range<Integer> range;
 	private boolean isAccent;
@@ -29,20 +31,32 @@ public final class Onset implements Comparable<Onset>{
 		this(start,duration,id,false);
 	}
 	
-	public Integer duration(){
-		return (range.upperEndpoint() - range.lowerEndpoint()) + 1;
-	}
-	
 	public Integer id(){
 		return this.id;
 	}
-	
+
 	public Integer start(){
 		return range.lowerEndpoint();
+	}
+
+	public Integer duration(){
+		return end() - start() + 1;
 	}
 	
 	public Integer end(){
 		return range.upperEndpoint();
+	}
+
+	public Integer start(Timeline context){
+		return context.getNecklace().wrapindex(range.lowerEndpoint());
+	}
+
+	public Integer duration(Timeline context){
+		return (end(context) - start(context)) + 1;
+	}
+
+	public Integer end(Timeline context){
+		return context.getNecklace().wrapindex(range.upperEndpoint());
 	}
 
 	public boolean isAccent(){
@@ -55,18 +69,8 @@ public final class Onset implements Comparable<Onset>{
 				id(), range.toString(), duration());
 	}
 
-	@Override
-	public int compareTo(Onset o) {
-		return start().compareTo(o.start());
-	}
 
 	
-	@Override
-	protected Object clone() throws CloneNotSupportedException {
-		Onset o = new Onset(start(), duration(), id());
-		return o;
-	}
-
 	public void setRange(Integer start, Integer end) {
 		this.range = Range.closed(start, end);
 		
@@ -77,15 +81,35 @@ public final class Onset implements Comparable<Onset>{
 		
 	}
 
-	public void shift(Integer offset) {
+	public void doShift(Integer offset) {
 		this.range = Range.closed(start() + offset, end() + offset);
 		
 	}
 
-	public void extend(int length) {
+	public void doExtend(int length) {
 		this.range = Range.closed(start(), end() + length);
 		
 	}
+	
+	public static Comparator<Onset> getComparator(Timeline t){
+		return new Comparator<Onset>() {
+
+			@Override
+			public int compare(Onset o1, Onset o2) {
+				return o1.start(t).compareTo(o2.start(t));
+			}
+		};
+	}
+
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		Onset o = new Onset(start(), duration(), id());
+		return o;
+	}
+
+	
+
+	
 	
 	
 	

@@ -74,12 +74,23 @@ public class TestTimeline {
 		assertTrue(tmp.getInterOnsetIntervals().equals("[3-3-2]"));
 		assertTrue(tmp.getBoxNotation().equals("[x..x..x.]"));
 		assertTrue(tmp.getNumberOfOnsets() == 3);
+
 		tmp.doRotatation(3);
-		System.out.println(tmp.getBoxNotation());
-		System.out.println(tmp.getInterOnsetIntervals());
-		System.out.println(tmp.getOnsets());
-	}
+		assertTrue(tmp.getInterOnsetIntervals().equals("[2-3-3]"));
+		assertTrue(tmp.getBoxNotation().equals("[.x.x..x.]"));
+		assertTrue(tmp.getNumberOfOnsets() == 3);
+		
+		tmp.doRotatation(-3);
+		assertTrue(tmp.getInterOnsetIntervals().equals("[3-3-2]"));
+		assertTrue(tmp.getBoxNotation().equals("[x..x..x.]"));
+		assertTrue(tmp.getNumberOfOnsets() == 3);
+		
+		tmp.doRotatation(-1);
+		assertTrue(tmp.getInterOnsetIntervals().equals("[3-2-3]"));
+		assertTrue(tmp.getBoxNotation().equals("[..x..x.x]"));
+		assertTrue(tmp.getNumberOfOnsets() == 3);
 	
+	}
 	@Test
 	public void testRemoveOnset() throws Exception {
 		Timeline tmp = new Timeline(3,3,2);

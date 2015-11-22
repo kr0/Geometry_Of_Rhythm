@@ -100,7 +100,7 @@ public class Timeline {
 
 		// Adjust previous onset
 		Onset prevOnset = getOnset(getOnsetNumber(removeOnset) - 1);
-		prevOnset.extend(lengthRemoved);
+		prevOnset.doExtend(lengthRemoved);
 		onsets.forcePut(prevOnset.id(), prevOnset);
 
 		onsets.remove(numberToRemove);
@@ -128,16 +128,25 @@ public class Timeline {
 	}
 
 	public void doRotatation(int i) {
-		pulses.rotateBy(i);
-		onsets.forEach((onsetnumber,onset) ->
-				onsets.merge(onsetnumber, onset, (key,val) -> {
+		onsets.forEach((onsetnumber, onset) -> onsets.merge(onsetnumber, onset,
+				(key, val) -> {
 					// temporary rest
-					pulses.set(Pulse.REST, onset.start());
-					val.shift(i);
-					// fill in attack in new location
-					pulses.set((val.isAccent() ? Pulse.ACCENT : Pulse.ATTACK), onset.start());
-					return val;}));
+				pulses.set(Pulse.REST, val.start(this));
+				val.doShift(1 * i);
+				// fill in attack in new location
+				return val;
+			}));
 		
+		onsets.forEach((onsetnumber, onset) -> onsets.merge(onsetnumber, onset,
+				(key, val) -> {
+					// temporary rest
+				pulses.set((val.isAccent() ? Pulse.ACCENT : Pulse.ATTACK),
+						val.start(this));
+				return val;
+			}));
+
+		// pulses.rotateBy(i);
+
 	}
 
 	public String getBoxNotation() {
@@ -145,7 +154,9 @@ public class Timeline {
 	}
 
 	public String getInterOnsetIntervals() {
-		return onsets.values().stream().map(Onset::duration)
+		return onsets.values().stream()
+				.sorted(Onset.getComparator(this))
+				.map(Onset::duration)
 				.map(Object::toString)
 				.collect(Collectors.joining("-", "[", "]"));
 	}
