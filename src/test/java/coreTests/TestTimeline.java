@@ -16,7 +16,6 @@ public class TestTimeline {
 
 	@Before
 	public void setUp() throws Exception {
-		// TODO 
 		t1 = new Timeline();
 		t1.addOnset(3);
 		t1.addOnset(3);
@@ -69,7 +68,6 @@ public class TestTimeline {
 	
 	@Test
 	public void testRotate() throws Exception{
-		// TODO
 		Timeline tmp = (Timeline)t1.clone();
 		assertTrue(tmp.getInterOnsetIntervals().equals("[3-3-2]"));
 		assertTrue(tmp.getBoxNotation().equals("[x..x..x.]"));
