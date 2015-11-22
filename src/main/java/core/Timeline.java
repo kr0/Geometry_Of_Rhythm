@@ -93,7 +93,7 @@ public class Timeline {
 	}
 
 	public void removeOnset(Onset removeOnset) throws IllegalArgumentException {
-		System.out.println(onsets);
+		// TODO refactor
 		int numberToRemove = getOnsetNumber(removeOnset);
 		int lengthRemoved = removeOnset.duration();
 
@@ -102,8 +102,6 @@ public class Timeline {
 
 		// Adjust previous onset
 		Onset prevOnset = getOnset(getOnsetNumber(removeOnset) - 1);
-		prevOnset.setRange(prevOnset.start(),
-				prevOnset.end() + removeOnset.duration());
 		prevOnset.extend(lengthRemoved);
 		onsets.forcePut(prevOnset.id(), prevOnset);
 
@@ -127,7 +125,6 @@ public class Timeline {
 			for (int i = 0; i < numberOfOnsets; i++) {
 				if (i > numberToRemove) {
 					Onset adjOnset = getOnset(i);
-					adjOnset.shift(-1 * lengthRemoved);
 					adjOnset.setId(i - 1);
 					onsets.forcePut(adjOnset.id(), adjOnset);
 				}
@@ -136,7 +133,6 @@ public class Timeline {
 			}
 
 			// decrement number of elements
-			onsets.remove(numberToRemove - 1);
 			numberOfOnsets--;
 
 		} else if (numberToRemove == 0) {
@@ -144,7 +140,6 @@ public class Timeline {
 			numberOfOnsets--;
 		}
 
-		System.out.println(onsets);
 	}
 
 	public void removeOnset(int i) {
@@ -211,7 +206,7 @@ public class Timeline {
 	}
 
 	private int getOnsetNumber(Onset onset) {
-		return onsets.inverse().get(onset);
+		return wrapOnsetIndex(onsets.inverse().get(onset));
 	}
 
 	public Map<Integer, Onset> getOnsets() {
