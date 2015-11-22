@@ -41,19 +41,6 @@ public class TestTimeline {
 		assertTrue(t1.getInterOnsetIntervals().equals(t2.getInterOnsetIntervals()));
 	}
 	
-	@Test
-	public void testGetOnsetNumberFromPulse() throws Exception {
-		int o1 = t1.getOnsetNumber(2);
-		int o2 = t1.getOnsetNumber(3);
-		int o22 = t1.getOnsetNumber(4);
-		int o3 = t1.getOnsetNumber(7);
-		assertTrue(o1 == 1);
-		assertTrue(o2 == 2);
-		assertTrue(o22 == 2);
-		assertTrue(o3 == 3);
-	
-	
-	}
 
 	@Test
 	public void testAddOnset() throws CloneNotSupportedException {
@@ -88,7 +75,7 @@ public class TestTimeline {
 		assertTrue(tmp.getInterOnsetIntervals().equals("[3-3-2]"));
 		assertTrue(tmp.getBoxNotation().equals("[x..x..x.]"));
 		assertTrue(tmp.getNumberOfOnsets() == 3);
-		tmp.rotateBy(-3);
+		
 	}
 	
 	@Test
@@ -102,15 +89,15 @@ public class TestTimeline {
 		assertTrue(tmp.getInterOnsetIntervals().equals("[3-3-2]"));
 		assertTrue(tmp.getBoxNotation().equals("[x..x..x.]"));
 		assertTrue(tmp.getNumberOfOnsets() == 3);
-		tmp.removeOnset(3);
+		tmp.removeOnset(2);
 		assertTrue(tmp.getInterOnsetIntervals().equals("[3-5]"));
 		assertTrue(tmp.getBoxNotation().equals("[x..x....]"));
 		assertTrue(tmp.getNumberOfOnsets() == 2);
-		tmp.removeOnset(2);
+		tmp.removeOnset(1);
 		assertTrue(tmp.getInterOnsetIntervals().equals("[8]"));
 		assertTrue(tmp.getBoxNotation().equals("[x.......]"));
 		assertTrue(tmp.getNumberOfOnsets() == 1);
-		tmp.removeOnset(1);
+		tmp.removeOnset(0);
 		assertTrue(tmp.getInterOnsetIntervals().equals("[]"));
 		assertTrue(tmp.getBoxNotation().equals("[........]"));
 		assertTrue(tmp.getNumberOfOnsets() == 0);
@@ -121,15 +108,15 @@ public class TestTimeline {
 		assertTrue(tmp.getInterOnsetIntervals().equals("[3-3-2]"));
 		assertTrue(tmp.getBoxNotation().equals("[x..x..x.]"));
 		assertTrue(tmp.getNumberOfOnsets() == 3);
-		tmp.removeOnset(1);
+		tmp.removeOnset(0);
 		assertTrue(tmp.getInterOnsetIntervals().equals("[5-2]"));
 		assertTrue(tmp.getBoxNotation().equals("[...x..x.]"));
 		assertTrue(tmp.getNumberOfOnsets() == 2);
-		tmp.removeOnset(1);
+		tmp.removeOnset(0);
 		assertTrue(tmp.getInterOnsetIntervals().equals("[8]"));
 		assertTrue(tmp.getBoxNotation().equals("[......x.]"));
 		assertTrue(tmp.getNumberOfOnsets() == 1);
-		tmp.removeOnset(1);
+		tmp.removeOnset(0);
 		assertTrue(tmp.getInterOnsetIntervals().equals("[]"));
 		assertTrue(tmp.getBoxNotation().equals("[........]"));
 		assertTrue(tmp.getNumberOfOnsets() == 0);

@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Observer;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Function;
@@ -22,12 +23,14 @@ public class Necklace<E> implements Iterable<E> {
 
 	static final int DEFAULT_CAPACITY = 16;
 	ArrayList<E> list;
+	List<Observer> observers;
 
 	/**
 	 * Creates an empty necklace with default capacity of 16.
 	 */
 	public Necklace() {
 		list = new ArrayList<>(DEFAULT_CAPACITY);
+		
 
 	}
 
@@ -193,6 +196,11 @@ public class Necklace<E> implements Iterable<E> {
 		return Iterators.cycle(this);
 	}
 
+	public void rotateBy(int i) {
+		Collections.rotate(list, i);
+		
+	}
+
 	@Override
 	public Iterator<E> iterator() {
 		return list.iterator();
@@ -260,10 +268,6 @@ public class Necklace<E> implements Iterable<E> {
 		}
 	}
 
-	public void rotateBy(int i) {
-		Collections.rotate(list, i);
-		
-	}
 	
 
 }
