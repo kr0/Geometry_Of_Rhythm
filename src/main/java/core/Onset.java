@@ -57,7 +57,7 @@ public final class Onset implements Comparable<Onset>{
 
 	@Override
 	public int compareTo(Onset o) {
-		return this.range.lowerEndpoint().compareTo(o.range.lowerEndpoint());
+		return start().compareTo(o.start());
 	}
 
 	
@@ -79,6 +79,11 @@ public final class Onset implements Comparable<Onset>{
 
 	public void shift(Integer offset) {
 		this.range = Range.closed(start() + offset, end() + offset);
+		
+	}
+
+	public void extend(int length) {
+		this.range = Range.closed(start(), end() + length);
 		
 	}
 	

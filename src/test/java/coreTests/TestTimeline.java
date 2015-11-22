@@ -88,7 +88,15 @@ public class TestTimeline {
 		assertTrue(tmp.getInterOnsetIntervals().equals("[3-3-2]"));
 		assertTrue(tmp.getBoxNotation().equals("[x..x..x.]"));
 		assertTrue(tmp.getNumberOfOnsets() == 3);
+		
+		System.out.println("Remove: 2 " + tmp.getOnset(2));
+		System.out.println(tmp.getOnsets());
+		System.out.println(tmp.getBoxNotation());
+		System.out.println(tmp.getInterOnsetIntervals());
 		tmp.removeOnset(2);
+		System.out.println(">>>");
+		System.out.println(tmp.getInterOnsetIntervals());
+		System.out.println(tmp.getBoxNotation());
 		assertTrue(tmp.getInterOnsetIntervals().equals("[3-5]"));
 		assertTrue(tmp.getBoxNotation().equals("[x..x....]"));
 		assertTrue(tmp.getNumberOfOnsets() == 2);
@@ -107,15 +115,30 @@ public class TestTimeline {
 		assertTrue(tmp.getInterOnsetIntervals().equals("[3-3-2]"));
 		assertTrue(tmp.getBoxNotation().equals("[x..x..x.]"));
 		assertTrue(tmp.getNumberOfOnsets() == 3);
+		System.out.println("Remove: 0 " + tmp.getOnset(0));
+		System.out.println(tmp.getOnsets());
+		System.out.println(tmp.getBoxNotation());
 		tmp.removeOnset(0);
+		System.out.println(tmp.getBoxNotation());
+		
+		
+		System.out.println("Remove: 0 " + tmp.getOnset(0));
+		System.out.println(tmp.getOnsets());
+		System.out.println(tmp.getBoxNotation());
+		tmp.removeOnset(0);
+		System.out.println(tmp.getBoxNotation());
 		assertTrue(tmp.getInterOnsetIntervals().equals("[3-5]"));
 		assertTrue(tmp.getBoxNotation().equals("[...x..x.]"));
 		assertTrue(tmp.getNumberOfOnsets() == 2);
-		tmp.removeOnset(0);
 		assertTrue(tmp.getInterOnsetIntervals().equals("[8]"));
 		assertTrue(tmp.getBoxNotation().equals("[......x.]"));
 		assertTrue(tmp.getNumberOfOnsets() == 1);
+		
+		System.out.println("Remove: 0 " + tmp.getOnset(0));
+		System.out.println(tmp.getOnsets());
+		System.out.println(tmp.getBoxNotation());
 		tmp.removeOnset(0);
+		System.out.println(tmp.getBoxNotation());
 		assertTrue(tmp.getInterOnsetIntervals().equals("[]"));
 		assertTrue(tmp.getBoxNotation().equals("[........]"));
 		assertTrue(tmp.getNumberOfOnsets() == 0);
