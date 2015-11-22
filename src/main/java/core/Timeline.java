@@ -2,14 +2,8 @@ package core;
 
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import com.google.common.collect.BiMap;
-import com.google.common.collect.ContiguousSet;
 import com.google.common.collect.HashBiMap;
-import com.google.common.collect.Range;
-import com.google.common.collect.RangeSet;
 
 public class Timeline {
 
