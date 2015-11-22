@@ -108,9 +108,7 @@ public class TestTimeline {
 		assertTrue(tmp.getBoxNotation().equals("[x..x..x.]"));
 		assertTrue(tmp.getNumberOfOnsets() == 3);
 		tmp.removeOnset(0);
-		System.out.println(tmp.getBoxNotation());
-		System.out.println(tmp.getInterOnsetIntervals());
-		assertTrue(tmp.getInterOnsetIntervals().equals("[5-2]"));
+		assertTrue(tmp.getInterOnsetIntervals().equals("[3-5]"));
 		assertTrue(tmp.getBoxNotation().equals("[...x..x.]"));
 		assertTrue(tmp.getNumberOfOnsets() == 2);
 		tmp.removeOnset(0);

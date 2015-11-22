@@ -103,7 +103,6 @@ public class Timeline {
 
 		if (numberToRemove > 0) {
 			// merge previous onset with removed one
-			System.out.println(onsets);
 			Onset prevOnset = getOnset(getOnsetNumber(removeOnset) - 1);
 			prevOnset.setRange(prevOnset.start(), removeOnset.end());
 			onsets.forcePut(prevOnset.id(), prevOnset);
@@ -111,32 +110,32 @@ public class Timeline {
 
 			// decrement
 			numberOfOnsets--;
-			System.out.println(onsets);
 
 			// reduce onset ids to reflect removal
 			for (int i = numberOfOnsets; i > numberToRemove; i--) {
 				Onset adjOnset = getOnset(i);
 				adjOnset.setId(i - 1);
-				onsets.forcePut(i - 1, adjOnset);
+				onsets.forcePut(adjOnset.id(), adjOnset);
 			}
 		} else if (numberToRemove == 0 && numberOfOnsets > 1) {
 			// extend previous onset
 			Onset prevOnset = getOnset(getOnsetNumber(removeOnset) - 1);
-			prevOnset.setRange(prevOnset.start(), prevOnset.end() + removeOnset.duration());
+			prevOnset.setRange(prevOnset.start(),
+					prevOnset.end() + removeOnset.duration());
 			onsets.forcePut(prevOnset.id(), prevOnset);
-			onsets.remove(numberToRemove);
-	
-			numberOfOnsets--;
-			
+
 			// shift ranges
-			for (int i = numberOfOnsets; i > numberToRemove; i--) {
-				
+			for (int i = 0; i < numberOfOnsets; i++) {
 				Onset adjOnset = getOnset(i);
 				adjOnset.shift(-1 * removeOnset.duration());
-				onsets.forcePut(i - 1, adjOnset);
-			}			
-			
-		} else if (numberToRemove == 0){
+				adjOnset.setId(i-1);
+				onsets.forcePut(adjOnset.id(), adjOnset);
+
+			}
+			onsets.remove(numberToRemove-1);
+			numberOfOnsets--;
+
+		} else if (numberToRemove == 0) {
 			onsets.remove(numberToRemove);
 			numberOfOnsets--;
 		}
