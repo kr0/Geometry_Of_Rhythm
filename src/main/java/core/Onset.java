@@ -31,34 +31,83 @@ public final class Onset{
 		this(start,duration,id,false);
 	}
 	
+	/**
+	 * This onset's id.
+	 * @return
+	 */
 	public Integer id(){
 		return this.id;
 	}
 
+	/**
+     * An Onset is a closed range [Start, End].
+	 * This method returns the absolute startpoint
+	 * with no context. 
+	 * @return
+	 */
 	public Integer start(){
 		return range.lowerEndpoint();
 	}
 
+	/**
+	 * The absolute duration of this onset independent of
+	 * any timeline.
+	 * @return
+	 */
 	public Integer duration(){
 		return end() - start() + 1;
 	}
 	
+	/**
+     * An Onset is a closed range [Start, End].
+	 * This method returns the absolute endpoint
+	 * with no context. 
+	 * @return
+	 */
 	public Integer end(){
 		return range.upperEndpoint();
 	}
 
+	/**
+     * An Onset is a closed range [Start, End].
+	 * This method returns the endpoint with respect
+	 * to a given context, that is, the index end is
+	 * wrapped modulo the size of the timeline.
+	 * @param context
+	 * @return
+	 */
 	public Integer start(Timeline context){
 		return context.getNecklace().wrapindex(range.lowerEndpoint());
 	}
 
+	/**
+	 * The length of this onset with respect to a given timeline.
+	 * The length is calculated based on the start and end points
+	 * in the context of a timeline.
+	 * @param context
+	 * @return
+	 * The minimum length of an onset must be 1 by definition.
+	 */
 	public Integer duration(Timeline context){
 		return (end(context) - start(context)) + 1;
 	}
 
+	/**
+	 * An Onset is a closed range [Start, End].
+	 * This method returns the endpoint with respect
+	 * to a given context, that is, the index end is
+	 * wrapped modulo the size of the timeline.
+	 * @param context
+	 * @return
+	 */
 	public Integer end(Timeline context){
 		return context.getNecklace().wrapindex(range.upperEndpoint());
 	}
 
+	/**
+	 * Is this Onset accented?
+	 * @return
+	 */
 	public boolean isAccent(){
 		return isAccent;
 	}
@@ -70,27 +119,54 @@ public final class Onset{
 	}
 
 
-	
+	/**
+	 * Sets the range of this Onsets
+	 * @param start
+	 * @param end
+	 */
 	public void setRange(Integer start, Integer end) {
 		this.range = Range.closed(start, end);
 		
 	}
 
+	/**
+	 * Sets the id of this Onset.
+	 * @param i
+	 */
 	public void setId(int i) {
 		this.id = i;
 		
 	}
 
+	/**
+	 * Shifts the start and end points of this Onset's range
+	 * by some offset.
+	 * @param offset
+	 * A positive of negative integer representing how many pulses
+	 * left or right to shift by.
+	 */
 	public void doShift(Integer offset) {
 		this.range = Range.closed(start() + offset, end() + offset);
 		
 	}
 
+	/**
+	 * Modifies the length of this onset by appending rests to the
+	 * the end.
+	 * @param length
+	 */
 	public void doExtend(int length) {
 		this.range = Range.closed(start(), end() + length);
 		
 	}
 	
+	/**
+	 * Returns a comparator that takes into account what Timeline
+	 * this onset exists on. That is, start and end indices
+	 * are wrapped to the Timeline.
+	 * @param t
+	 * @return
+	 */
 	public static Comparator<Onset> getComparator(Timeline t){
 		return new Comparator<Onset>() {
 

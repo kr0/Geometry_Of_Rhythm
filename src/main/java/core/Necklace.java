@@ -4,15 +4,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Observer;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 
 /**
- * A necklace is a circular array list
+ * A necklace is a mutable circular array list of objects.
  * 
  * @author kr0
  * @param <E>
@@ -22,19 +20,22 @@ public class Necklace<E> implements Iterable<E> {
 
 	static final int DEFAULT_CAPACITY = 16;
 	ArrayList<E> list;
-	List<Observer> observers;
 
 	/**
 	 * Creates an empty necklace with default capacity of 16.
 	 */
 	public Necklace() {
 		list = new ArrayList<>(DEFAULT_CAPACITY);
-		
 
 	}
 
-	Necklace(int capacity) {
+	public Necklace(int capacity) {
 		list = new ArrayList<>(capacity);
+	}
+
+	public Necklace(Necklace<E> necklace) {
+		this.list = new ArrayList<E>(necklace.list);
+
 	}
 
 	/**
@@ -65,7 +66,7 @@ public class Necklace<E> implements Iterable<E> {
 	 * @return
 	 */
 	public void add(E elem) {
-		
+
 		list.add(elem);
 
 	}
@@ -97,7 +98,7 @@ public class Necklace<E> implements Iterable<E> {
 		for (E elem : collection) {
 			add(elem);
 		}
-	
+
 	}
 
 	/**
@@ -110,11 +111,9 @@ public class Necklace<E> implements Iterable<E> {
 	public E remove(int index) {
 		if (size() == 0) {
 			return null;
-		} 
+		}
 		return list.remove(wrapindex(index));
 	}
-
-	
 
 	/**
 	 * Sets index to elem.
@@ -187,17 +186,35 @@ public class Necklace<E> implements Iterable<E> {
 		}
 	}
 
+	/**
+	 * Wraps this index to this circular list.
+	 * 
+	 * @param index
+	 * @return
+	 */
 	public int wrapindex(int index) {
 		return Math.floorMod(index, size());
 	}
 
-	public Iterator<E> cycle(){
+	/**
+	 * Returns an iterator that cycles indefinitely over the elements of
+	 * iterable. The returned iterator supports remove() if the provided
+	 * iterator does. After remove() is called, subsequent cycles omit the
+	 * removed element, which is no longer in iterable. The iterator's hasNext()
+	 * method returns true until iterable is empty. <br>
+	 * <b>Warning:</b> Typical uses of the resulting iterator may produce an
+	 * infinite loop. You should use an explicit break or be certain that you
+	 * will eventually remove all the elements.
+	 * 
+	 * @return
+	 */
+	public Iterator<E> cycle() {
 		return Iterators.cycle(this);
 	}
 
 	public void rotateBy(int i) {
 		Collections.rotate(list, i);
-		
+
 	}
 
 	@Override
@@ -217,7 +234,6 @@ public class Necklace<E> implements Iterable<E> {
 		if (obj == null || !(obj instanceof Necklace<?>)) {
 			return false;
 		}
-
 		return this.toString().equals(obj.toString());
 	}
 
@@ -231,13 +247,14 @@ public class Necklace<E> implements Iterable<E> {
 		return toString("");
 	}
 
+	/**
+	 * A custom toString method. You can specify what delimiter to use.s
+	 * @param delimiter
+	 * @return
+	 */
 	public String toString(String delimiter) {
-
 		return list.stream().map(Object::toString)
 				.collect(Collectors.joining(delimiter, "[", "]"));
 	}
-
-	
-
 
 }

@@ -5,25 +5,25 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
-import core.Timeline;
+import core.ResizeableTimeline;
 
 public class TestTimeline {
 
-	private Timeline t1;
-	private Timeline t2;
+	private ResizeableTimeline t1;
+	private ResizeableTimeline t2;
 	private String t1Box;
 	private String t1IOI;
 
 	@Before
 	public void setUp() throws Exception {
-		t1 = new Timeline();
+		t1 = new ResizeableTimeline();
 		t1.addOnset(3);
 		t1.addOnset(3);
 		t1.addOnset(2);
 		t1Box = "[x..x..x.]";
 		t1IOI = "[3-3-2]";
 		
-		t2 = new Timeline(3,3,2);
+		t2 = new ResizeableTimeline(3,3,2);
 				
 	}
 	
@@ -43,7 +43,7 @@ public class TestTimeline {
 	@Test
 	public void testAddOnset() throws CloneNotSupportedException {
 		// number of onsets increases
-		Timeline tmp = (Timeline)t1.clone();
+		ResizeableTimeline tmp = (ResizeableTimeline)t1.clone();
 		assertTrue(t1.getNumberOfOnsets() == 3);
 		assertTrue(tmp.getNumberOfOnsets() == t1.getNumberOfOnsets());
 		int count = 3;
@@ -68,7 +68,7 @@ public class TestTimeline {
 	
 	@Test
 	public void testRotate() throws Exception{
-		Timeline tmp = (Timeline)t1.clone();
+		ResizeableTimeline tmp = (ResizeableTimeline)t1.clone();
 		assertTrue(tmp.getInterOnsetIntervals().equals("[3-3-2]"));
 		assertTrue(tmp.getBoxNotation().equals("[x..x..x.]"));
 		assertTrue(tmp.getNumberOfOnsets() == 3);
@@ -91,7 +91,7 @@ public class TestTimeline {
 	}
 	@Test
 	public void testRemoveOnset() throws Exception {
-		Timeline tmp = new Timeline(3,3,2);
+		ResizeableTimeline tmp = new ResizeableTimeline(3,3,2);
 		
 		// Remove onsets from right to left
 		// check that method:
@@ -119,7 +119,7 @@ public class TestTimeline {
 		assertTrue(tmp.getNumberOfOnsets() == 0);
 		
 		// Remove onsets from left to right
-		tmp = (Timeline) t1.clone();
+		tmp = (ResizeableTimeline) t1.clone();
 		tmp.removeOnset(0);
 		assertTrue(tmp.getInterOnsetIntervals().equals("[3-5]"));
 		assertTrue(tmp.getBoxNotation().equals("[...x..x.]"));
