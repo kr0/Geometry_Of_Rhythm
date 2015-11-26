@@ -187,6 +187,23 @@ public class Necklace<E> implements Iterable<E> {
 	}
 
 	/**
+	 * Decreases the size of this necklace by removing pulses between
+	 * end points.
+	 * @param end
+	 * must be less or equal to  end2
+	 * @param end2
+	 * must be greater that or equal to end
+	 */
+	public void shrink(int end, int end2) {
+		if(end2 > end){
+			throw new IllegalArgumentException("Can not shrink in that direction");
+		}
+		
+		set(null, end, end2);
+		list.removeIf(p -> p==null);
+	}
+
+	/**
 	 * Wraps this index to this circular list.
 	 * 
 	 * @param index

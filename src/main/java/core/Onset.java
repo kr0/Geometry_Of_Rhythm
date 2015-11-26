@@ -145,7 +145,7 @@ public final class Onset{
 	 * A positive of negative integer representing how many pulses
 	 * left or right to shift by.
 	 */
-	public void doShift(Integer offset) {
+	public void shift(Integer offset) {
 		this.range = Range.closed(start() + offset, end() + offset);
 		
 	}
@@ -155,7 +155,7 @@ public final class Onset{
 	 * the end.
 	 * @param length
 	 */
-	public void doExtend(int length) {
+	public void extend(int length) {
 		this.range = Range.closed(start(), end() + length);
 		
 	}

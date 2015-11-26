@@ -118,7 +118,7 @@ public class ResizeableTimeline implements Timeline {
 
 		// Adjust previous onset
 		Onset prevOnset = getOnset(getOnsetNumber(removeOnset) - 1);
-		prevOnset.doExtend(lengthRemoved);
+		prevOnset.extend(lengthRemoved);
 		onsets.forcePut(prevOnset.id(), prevOnset);
 
 		// Remove
@@ -173,17 +173,17 @@ public class ResizeableTimeline implements Timeline {
 
 	@Override
 	public Onset getOnset(int i) {
-		return onsets.get(wrapIndex(i));
+		return onsets.get(wrapOnsetIndex(i));
 	}
 
 	@Override
 	public int getOnsetNumber(Onset onset) {
-		return wrapIndex(onsets.inverse().get(onset));
+		return wrapOnsetIndex(onsets.inverse().get(onset));
 	}
 
 	@Override
-	public Map<Integer, Onset> getOnsets() {
-		return new HashMap<Integer, Onset>(onsets);
+	public BiMap<Integer, Onset> getOnsets() {
+		return HashBiMap.create(onsets);
 	}
 
 	
@@ -194,7 +194,7 @@ public class ResizeableTimeline implements Timeline {
 
 	
 	@Override
-	public int wrapIndex(int i) {
+	public int wrapOnsetIndex(int i) {
 		return Math.floorMod(i, numberOfOnsets);
 	}
 

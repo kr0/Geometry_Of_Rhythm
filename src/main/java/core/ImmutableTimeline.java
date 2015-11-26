@@ -137,7 +137,7 @@ public class ImmutableTimeline implements Timeline {
 		// Renumber onsets
 		for (int i = 0; i < numberOfOnsets; i++) {
 			if (i > numberToRemove) {
-				Onset adjOnset = newOnsets.get(wrapIndex(i));
+				Onset adjOnset = newOnsets.get(wrapOnsetIndex(i));
 				adjOnset.setId(i - 1);
 				newOnsets.forcePut(adjOnset.id(), adjOnset);
 			}
@@ -152,14 +152,14 @@ public class ImmutableTimeline implements Timeline {
 	 * become rests.
 	 * @param i
 	 */
-	public void removeOnset(int i) {
-		removeOnset(getOnset(i));
+	public Timeline removeOnset(int i) {
+		return removeOnset(getOnset(i));
 	}
 
 	/**
-	 * Replaces a specific onset with a new onset. This
-	 * Timeline will extend/shrink to accommodate the new onset.
-	 * Neighboring onsets are not affected.
+	 * Replaces a specific onset with a new onset. This method
+	 * returns a Timeline that is extended/shrunk to accommodate
+	 * the new onset -- neighboring onsets are not affected.
 	 * @param i
 	 * @param duration
 	 * @param isAccent
@@ -167,8 +167,31 @@ public class ImmutableTimeline implements Timeline {
 	 */
 	public Timeline replaceOnset(int i, int duration, boolean isAccent)
 			throws IllegalArgumentException {
-		// TODO
-		return null;
+
+		BiMap<Integer, Onset> newOnsets = HashBiMap.create(onsets);
+		Necklace<Pulse> newPulses = new Necklace<>(pulses);
+		
+		Onset replacedOnset = newOnsets.get(wrapOnsetIndex(i));
+		Onset newOnset = new Onset(
+				replacedOnset.start(),
+				duration,
+				replacedOnset.id(),
+				isAccent);
+
+		// Modify necklace
+		if(replacedOnset.duration() > newOnset.duration()){
+			newPulses.shrink(replacedOnset.end(),newOnset.end());
+		}
+		else if(replacedOnset.duration() <= newOnset.duration()){
+			newPulses.extend(replacedOnset.end(), Pulse.REST, newOnset.duration());
+			newPulses.set(isAccent? Pulse.ACCENT: Pulse.ATTACK, newOnset.start());
+		}
+
+		// Modify onset map
+		newOnsets.forcePut(replacedOnset.id(), newOnset);
+		Timeline t = new ImmutableTimeline(newPulses, newOnsets);
+		
+		return t;
 	}
 
 	
@@ -184,17 +207,17 @@ public class ImmutableTimeline implements Timeline {
 
 	@Override
 	public Onset getOnset(int i) {
-		return onsets.get(wrapIndex(i));
+		return onsets.get(wrapOnsetIndex(i));
 	}
 
 	@Override
 	public int getOnsetNumber(Onset onset) {
-		return wrapIndex(onsets.inverse().get(onset));
+		return wrapOnsetIndex(onsets.inverse().get(onset));
 	}
 
 	@Override
-	public Map<Integer, Onset> getOnsets() {
-		return new HashMap<Integer, Onset>(onsets);
+	public BiMap<Integer, Onset> getOnsets() {
+		return HashBiMap.create(onsets);
 	}
 
 	
@@ -205,7 +228,7 @@ public class ImmutableTimeline implements Timeline {
 
 	
 	@Override
-	public int wrapIndex(int i) {
+	public int wrapOnsetIndex(int i) {
 		return Math.floorMod(i, numberOfOnsets);
 	}
 

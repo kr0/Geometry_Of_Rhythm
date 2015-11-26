@@ -2,6 +2,8 @@ package core;
 
 import java.util.Map;
 
+import com.google.common.collect.BiMap;
+
 public interface Timeline {
 
 
@@ -33,13 +35,13 @@ public interface Timeline {
 	public int getOnsetNumber(Onset onset);
 
 	/**
-	 * Unmodifiable view of the onsets in this timeline
+	 * returns a copy of this timeline's onset map.
 	 * @return
 	 */
-	public Map<Integer, Onset> getOnsets();
+	public BiMap<Integer, Onset> getOnsets();
 
 	/**
-	 * Unmodifiable view of the pulses in this timeline
+	 * returns a copy of this timeline's pulse necklace
 	 * @return
 	 */
 	public Necklace<Pulse> getNecklace();
@@ -50,7 +52,7 @@ public interface Timeline {
 	 * @param i
 	 * @return
 	 */
-	public int wrapIndex(int i);
+	public int wrapOnsetIndex(int i);
 	
 
 

@@ -1,6 +1,10 @@
 package core;
 
+import java.util.List;
 import java.util.stream.Collectors;
+
+import com.google.common.collect.BiMap;
+import com.google.common.collect.Lists;
 
 
 /**
@@ -11,17 +15,34 @@ import java.util.stream.Collectors;
  */
 public final class Geometry {
 
-	public static int[] rhythmicContour(Timeline t){
-		// TODO
-		return null;
+	public static List<Integer> rhythmicContour(Timeline t){
+		List<Integer> distances = Lists.newLinkedList();
+		Integer lastInterval = null;
+		for(Integer interval: Geometry.interOnsetIntervals(t)){
+			if(lastInterval != null){
+				int distance = interval - lastInterval;
+				distances.add(distance);
+			}
+			lastInterval = interval;
+		}
+		
+		
+		return distances;
 	}
 	
 	
 	public String boxNotation(Timeline t) {
 		return t.getNecklace().toString();
 	}
+	
 
-	public static String interOnsetIntervals(Timeline t) {
+	public static List<Integer> interOnsetIntervals(Timeline t) {
+		return t.getOnsets().values().stream()
+				.sorted(Onset.getComparator(t))
+				.map(Onset::duration)
+				.collect(Collectors.toList());
+	}
+	public static String interOnsetIntervalString(Timeline t){
 		return t.getOnsets().values().stream()
 				.sorted(Onset.getComparator(t))
 				.map(Onset::duration)

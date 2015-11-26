@@ -1,6 +1,10 @@
 package core;
 
+import java.util.List;
 import java.util.Map;
+
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 
 /**
  * A utility class for manipulating Timelines.
@@ -11,8 +15,25 @@ public final class Timelines {
 
 	
 	
-	public static Timeline applyRhythmicContour(Timeline t, int[] contour){
-		return t;
+	public static Timeline applyRhythmicContour(Timeline t, List<Integer> contour){
+		BiMap<Integer, Onset> onsets = t.getOnsets();
+		Necklace<Pulse> pulses = t.getNecklace();
+		
+		onsets.inverse().forEach((onset, id) ->
+			onsets.merge(id, onset, (k, v) ->
+				{
+					int offset = contour.get(id);
+					Onset newOnset = new Onset(onset.start(), onset.duration() + offset, onset.id());
+					
+					if(offset > 0){
+						pulses.extend(onset.start(), Pulse.REST, offset);
+					} else if (offset < 0){
+						pulses.shrink(onset.end(), onset.end() + offset);
+					}
+					return newOnset;
+				}));
+		
+		return new ImmutableTimeline(pulses, onsets);
 	}
 	
 	public static Timeline union(Timeline t1, Timeline t2){
@@ -37,7 +58,7 @@ public final class Timelines {
 				(key, val) -> {
 					// temporary rest
 				pulses.set(Pulse.REST, val.start(newT));
-				val.doShift(1 * amount);
+				val.shift(1 * amount);
 				return val;
 			}));
 		
